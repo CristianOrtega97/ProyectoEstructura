@@ -21,7 +21,7 @@ municipio_nombre varchar(255) not null
 )
 
 -- CREATE TABLE PELICULAS - COMPLETED (16/10/20)
-create table peliculas (
+create table peliculas(
 id_peliculas int not null primary key identity(1,1),
 peliculas_nombre varchar(255) not null,
 peliculas_minutos int not null
@@ -119,8 +119,19 @@ select * from estados
 select * from municipios
 select * from peliculas
 select * from cartelera
+select * from vistaCarteleraActual
+
+create view vistaCarteleraActual
+as 
+select p.peliculas_nombre,m.municipio_nombre,e.estado_nombre,p.peliculas_minutos,c.cartelera_inicio,c.cartelera_final
+from cartelera c
+inner join municipios m on c.id_municipio = m.id_municipios
+inner join estados e on m.id_estado = e.id_estado
+inner join peliculas p on c.id_pelicula = p.id_peliculas
+go
 
 -- DROP TABLES  -- DROP ONLY IF NEEDED
 drop table estados
 drop table municipios
 drop table peliculas
+drop view dbo.vista_cartelera_actual
