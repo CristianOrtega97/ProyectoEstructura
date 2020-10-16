@@ -1,6 +1,9 @@
 -- Author: Emanuel Camarena
 -- Modified on: 16/10/20
 
+--USE RIGHT DB
+USE EstructuraAlgoritmos
+
 -- CREATE TABLES
 -- CREATE TABLE ESTADOS - COMPLETED (16/10/20)
 create table estados(
@@ -22,6 +25,16 @@ create table peliculas (
 id_peliculas int not null primary key identity(1,1),
 peliculas_nombre varchar(255) not null,
 peliculas_minutos int not null
+)
+
+-- CREATE TABLE CARTELERA - COMPLETED (16/10/20)
+create table cartelera(
+id_cartelera int not null primary key identity(1,1),
+id_pelicula int not null foreign key references peliculas(id_peliculas),
+id_municipio int not null foreign key references municipios(id_municipios),
+cartelera_dia date not null,
+cartelera_inicio float not null,
+cartelera_final float not null
 )
 
 --INSERT INFORMATION
@@ -90,17 +103,24 @@ insert into municipios values ('D','5','Angostura')
 insert into municipios values ('E','5','Mocorito')
 
 
--- INSERT PELICULAS
+-- INSERT PELICULAS - COMPLETED
 insert into peliculas values ('Mulan',120)
 insert into peliculas values ('The pick of Destiny',140)
 insert into peliculas values ('The Lion King',130)
 insert into peliculas values ('Toy Story 4',120)
 insert into peliculas values ('Cars 3',100)
 
+
+-- INSERT CARTELERA - COMPLETED
+insert into cartelera values(1,1,'2020-10-10',20,22)
+
 -- SELECT - FOR TESTING
 select * from estados
 select * from municipios
+select * from peliculas
+select * from cartelera
 
 -- DROP TABLES  -- DROP ONLY IF NEEDED
 drop table estados
 drop table municipios
+drop table peliculas
