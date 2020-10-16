@@ -11,7 +11,7 @@ query_select_peliculas='SELECT * FROM peliculas'
 query_insert_estados="insert into estados values('Nuevo Leon')"
 
 #UPDATE QUERIES
-
+query_update_estados="update estados set estado_nombre = 'Nuevo Leon' where id_estado=1"
 #DELETE QUERIES
 
 conn = pyodbc.connect(
@@ -21,7 +21,7 @@ conn = pyodbc.connect(
 
 if conn:
     print("We're connected")
-    new_data=Connection.add(conn,query_insert_estados)
+    new_data=Connection.add(conn,query_update_estados)
     data_estados=Connection.read(conn,query_select_estados)
     print(data_estados)
 
