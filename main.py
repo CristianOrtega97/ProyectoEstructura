@@ -15,6 +15,7 @@ query_update_estados="update estados set estado_nombre = 'Nuevo Leon' where id_e
 
 #QUERY VISTAS
 query_vista_cartelera_actual="select * from vistaCarteleraActual"
+query_vista_usuarios = "select * from vistaUsuarios"
 
 conn = pyodbc.connect(
     "DSN=SQLExpressODBC",
@@ -24,7 +25,9 @@ conn = pyodbc.connect(
 if conn:
     print("We're connected")
     data_cartelera_disponible=Connection.read(conn,query_vista_cartelera_actual)
+    data_usuarios_disponible=Connection.read(conn,query_vista_usuarios)
     print(data_cartelera_disponible)
+    print(data_usuarios_disponible)
 
 else: 
     print("You're not connected")

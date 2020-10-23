@@ -1,5 +1,10 @@
 -- Author: Emanuel Camarena
 -- Modified on: 16/10/20
+-- DROP TABLE
+drop database EstructuraAlgoritmos
+
+-- CREATE DATABASE -- CREATE ONLY IF NEEDED
+create database EstructuraAlgoritmos
 
 --USE RIGHT DB
 USE EstructuraAlgoritmos
@@ -45,7 +50,7 @@ usuarios_nombre varchar(255) not null,
 usuarios_apellido varchar(255) not null,
 usuarios_usuario int not null,
 usuarios_password varchar(255) not null,
-usuarios_municipio int not null foreign key references estados(id_estados),
+usuarios_estados int not null foreign key references estados(id_estados),
 usuarios_tipo int not null,
 usuarios_status int not null
 )
@@ -105,67 +110,6 @@ insert into municipios values ('F','3','Ecatepec de Morelos')
 insert into municipios values ('G','3','Naucalpan de Juárez')
 insert into municipios values ('H','3','Morelos')
 insert into municipios values ('I','3','Texcoco')
--- Author: Emanuel Camarena
--- Modified on: 16/10/20
-
---USE RIGHT DB
-USE EstructuraAlgoritmos
-
--- CREATE TABLES
--- CREATE TABLE ESTADOS - COMPLETED (16/10/20)
-create table estados(
-id_estados int not null primary key identity(1,1),
-estados_id varchar(5) not null,
-estados_nombre varchar(255) not null
-)
-
--- CREATE TABLE MUNICIPIOS - COMPLETED (16/10/20)
-create table municipios(
-id_municipios int not null primary key identity(1,1),
-municipios_id varchar(1) not null,
-municipios_estados int not null foreign key references estados(id_estados),
-municipio_nombre varchar(255) not null
-)
-
--- CREATE TABLE PELICULAS - COMPLETED (16/10/20)
-create table peliculas(
-id_peliculas int not null primary key identity(1,1),
-peliculas_nombre varchar(255) not null,
-peliculas_minutos int not null
-)
-
--- CREATE TABLE CARTELERA - COMPLETED (16/10/20)
-create table cartelera(
-id_cartelera int not null primary key identity(1,1),
-cartelera_pelicula int not null foreign key references peliculas(id_peliculas),
-cartelera_municipio int not null foreign key references municipios(id_municipios),
-cartelera_dia date not null,
-cartelera_inicio float not null,
-cartelera_final float not null,
-cartelera_status int not null
-)
-
--- CREATE TABLE USUARIOS - COMPLETED (23/10/20)
-create table usuarios(
-id_usuarios int not null primary key identity(1,1),
-usuarios_nombre varchar(255) not null,
-usuarios_apellido varchar(255) not null,
-usuarios_usuario int not null,
-usuarios_password varchar(255) not null,
-usuarios_municipio int not null foreign key references estados(id_estados),
-usuarios_tipo int not null,
-usuarios_status int not null
-)
-
--- CREATE TABLE RESERVACIONES - COMPLETED (23/10/20)
-create table reservaciones(
-reservaciones_id int not null primary key identity(1,1),
-reservaciones_numero int not null,
-reservaciones_usuario int not null foreign key references usuarios(id_usuarios),
-reservaciones_municipio int not null foreign key references municipios(id_municipios),
-reservaciones_cartelera int not null foreign key references cartelera(id_cartelera),
-reservaciones_status int not null
-)
 
 
 --INSERT INFORMATION
@@ -244,7 +188,8 @@ insert into peliculas values ('Cars 3',100)
 
 -- INSERT CARTELERA - COMPLETED
 insert into cartelera values(1,1,'2020-10-10',20,22,1)
-
+insert into cartelera values(2,2,'2020-10-10',20,22,1)
+insert into cartelera values(2,11,'2020-10-10',20,22,1)
 
 -- INSERT USUARIOS - COMPLETED (23/10/20)
 insert into usuarios values ('Juan','Perez',1234,'1234',1,1,1)
@@ -261,15 +206,24 @@ select * from estados
 select * from municipios
 select * from peliculas
 select * from cartelera
+select * from usuarios
 select * from vistaCarteleraActual
 
 create view vistaCarteleraActual
 as 
-select p.peliculas_nombre,m.municipio_nombre,e.estados_nombre,p.peliculas_minutos,c.cartelera_inicio,c.cartelera_final
+select p.peliculas_nombre,m.municipio_nombre,c.cartelera_municipio,e.estados_nombre,p.peliculas_minutos,c.cartelera_inicio,c.cartelera_final
 from cartelera c
 inner join municipios m on c.cartelera_municipio = m.id_municipios
 inner join estados e on m.municipios_estados = e.id_estados
 inner join peliculas p on c.cartelera_pelicula = p.id_peliculas
+go
+
+
+create view vistaUsuarios
+as
+select u.usuarios_nombre,usuarios_apellido,u.usuarios_usuario,u.usuarios_password,e.estados_nombre,u.usuarios_tipo,u.usuarios_status
+from usuarios u
+inner join estados e on u.usuarios_estados = e.id_estados
 go
 
 -- DROP TABLES  -- DROP ONLY IF NEEDED
