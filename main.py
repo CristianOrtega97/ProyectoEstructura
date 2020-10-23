@@ -31,3 +31,37 @@ if conn:
 
 else: 
     print("You're not connected")
+
+def log_in(entrada_usuario,entrada_password,data_usuarios_disponible):
+    usuario_encontrado=''
+    for i in range(len(data_usuarios_disponible)):
+        if data_usuarios_disponible[i][2]==entrada_usuario:
+            usuario_encontrado=data_usuarios_disponible[i]
+    print('Usuario encontrado: ',usuario_encontrado)
+    if usuario_encontrado == '':
+        print('Usuario es inexistente, intente de nuevo')
+        return 0
+    else:
+        if usuario_encontrado[3]==entrada_password:
+            return 1
+        else:
+            print('La contraseña es incorrecta, intente de nuevo')
+            return 0
+
+
+def seleccion_menu(tipo_usuario):
+    if(tipo_usuario == 1):
+        pass
+    else:
+        pass
+
+def menu_administrador():
+    pass
+
+def menu_cliente():
+    pass
+
+entrada_usuario=int(input('Ingrese su usuario: '))
+entrada_password=input('Ingrese su contraseña: ')
+encontrado=log_in(entrada_usuario,entrada_password,data_usuarios_disponible)
+print(encontrado)
