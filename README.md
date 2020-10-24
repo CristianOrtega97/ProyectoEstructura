@@ -3,6 +3,7 @@
 - A movie teather programm fully implemented 
 
 #Intructions:
+- YOU NEED PYTHON PREVIOUSLY INSTALLED 
 - Run:  pip install pyodb in Terminal
 - Install SQL (Server Express or Developer will do) Testing was done on Express 2017
 - Must do proper configuration to connect thru pyodb
