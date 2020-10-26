@@ -61,12 +61,20 @@ def menu_administrador(data_admin):
 def menu_cliente(data_customer):
     print("Usuario es cliente")
 
-entrada_usuario=int(input('Ingrese su usuario: '))
-entrada_password=input('Ingrese su contraseña: ')
-encontrado=log_in(entrada_usuario,entrada_password,data_usuarios_disponible)
-print(encontrado)
-if encontrado != 0:
-    if encontrado[5] == 1:
-        menu_administrador(encontrado)
+encontrado = 1
+while (encontrado != 0):
+    entrada_usuario=int(input('Ingrese su usuario o "0" para salir: '))
+    if entrada_usuario == 0:
+        print('Gracias por utilizar nuestro servicio, vuelva pronto')
+        break
     else:
-        menu_cliente(encontrado)
+        entrada_password=input('Ingrese su contraseña: ')
+        encontrado=log_in(entrada_usuario,entrada_password,data_usuarios_disponible)
+        print(encontrado)
+        if encontrado != 0:
+            if encontrado[5] == 1:
+                menu_administrador(encontrado)
+            else:
+                menu_cliente(encontrado)
+        else:
+            print('Intente de nuevo o ingrese "0" para salir')        
