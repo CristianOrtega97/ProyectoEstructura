@@ -43,7 +43,7 @@ def log_in(entrada_usuario,entrada_password,data_usuarios_disponible):
         return 0
     else:
         if usuario_encontrado[3]==entrada_password:
-            return 1
+            return usuario_encontrado
         else:
             print('La contraseña es incorrecta, intente de nuevo')
             return 0
@@ -55,13 +55,18 @@ def seleccion_menu(tipo_usuario):
     else:
         pass
 
-def menu_administrador():
-    pass
+def menu_administrador(data_admin):
+    print("Usuario es admin")
 
-def menu_cliente():
-    pass
+def menu_cliente(data_customer):
+    print("Usuario es cliente")
 
 entrada_usuario=int(input('Ingrese su usuario: '))
 entrada_password=input('Ingrese su contraseña: ')
 encontrado=log_in(entrada_usuario,entrada_password,data_usuarios_disponible)
 print(encontrado)
+if encontrado != 0:
+    if encontrado[5] == 1:
+        menu_administrador(encontrado)
+    else:
+        menu_cliente(encontrado)
