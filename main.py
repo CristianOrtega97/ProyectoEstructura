@@ -56,6 +56,8 @@ def seleccion_menu(tipo_usuario):
         pass
 
 def menu_administrador(data_admin):
+    print("Bienvenido Admin: ",data_admin[0]," ",data_admin[1])
+    print("Sucursal: ", data_admin[5])
     print("Usuario es admin")
 
 def menu_cliente(data_customer):
@@ -72,7 +74,7 @@ while (encontrado != 0):
         encontrado=log_in(entrada_usuario,entrada_password,data_usuarios_disponible)
         print(encontrado)
         if encontrado != 0:
-            if encontrado[5] == 1:
+            if encontrado[6] == 1:
                 menu_administrador(encontrado)
             else:
                 menu_cliente(encontrado)
