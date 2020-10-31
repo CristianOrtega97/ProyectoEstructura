@@ -26,6 +26,7 @@ if conn:
     print("We're connected")
     data_cartelera_disponible=Connection.read(conn,query_vista_cartelera_actual)
     data_usuarios_disponible=Connection.read(conn,query_vista_usuarios)
+    data_peliculas=Connection.read(conn,'select peliculas_nombre from peliculas')
     print(data_cartelera_disponible)
     print(data_usuarios_disponible)
 
@@ -54,6 +55,38 @@ def seleccion_menu(tipo_usuario):
         pass
     else:
         pass
+
+def partition(arr, low, high):
+    i = (low-1)
+    pivot = arr[high]
+ 
+    for j in range(low, high):
+        if arr[j] <= pivot:
+
+            i = i+1
+            arr[i], arr[j] = arr[j], arr[i]
+ 
+    arr[i+1], arr[high] = arr[high], arr[i+1]
+    return (i+1)
+
+def quickSort(arr, low, high):
+    if len(arr) == 1:
+        return arr
+    if low < high:
+        pi = partition(arr, low, high)
+        quickSort(arr, low, pi-1)
+        quickSort(arr, pi+1, high)
+
+def consultarCartelera(data_cartelera):
+    print('Pelicula: ', data_cartelera[0][0])
+    print('Clasificación:',data_cartelera[0][1])
+    print('Duración: ',data_cartelera[0][5],'minutos')
+    for i in range(len(data_cartelera)):
+        if data_cartelera[i][10] == 1:
+            print('----------------------------------------------')
+            print('Sucursal: ',data_cartelera[i][2])
+            print('Día: ',data_cartelera[i][4])
+            print('Horario: ',int(data_cartelera[i][6]),':',data_cartelera[i][7],' - ',int(data_cartelera[i][8]),':',data_cartelera[i][9]) 
 
 def menu_administrador(data_admin):
     opcion_menu=1
@@ -84,7 +117,40 @@ def menu_administrador(data_admin):
                 elif opcion_menu == 5:
                     pass
                 elif opcion_menu == 6:
-                    pass
+                    n = len(data_peliculas)
+                    print("Sorted array is:",data_peliculas)
+                    quickSort(data_peliculas, 0, n-1)
+                    opcion_pelicula=1
+                    while(opcion_pelicula!=0):
+                        try:
+                            print('Seleccione la pelicula a buscar: ')
+                            for i in range(len(data_peliculas)):
+                                print(i+1,'.-',data_peliculas[i][0])
+                            print('0.- Salir')
+                            opcion_pelicula=int(input('Respuesta: '))
+                            if opcion_pelicula > 0 and opcion_pelicula <= len(data_peliculas): 
+                                busqueda_pelicula = "select * from vistaCarteleraActual where peliculas_nombre = '",data_peliculas[opcion_pelicula-1][0],"'"
+                                query_busqueda_pelicula = ''.join(busqueda_pelicula)
+                                data_cartelera_consulta=Connection.read(conn,query_busqueda_pelicula)
+                                consultarCartelera(data_cartelera_consulta)
+                                break
+                            elif opcion_pelicula == 0:
+                                print()
+                                print('--------------------')
+                                print('Regresando al menú anterior')
+                                print('--------------------')
+                                print()
+                            else:
+                                print()
+                                print('------------------------------')
+                                print('La opción ingresada no existe')
+                                print('------------------------------')
+                                print()
+                        except ValueError:
+                            print()
+                            print('*******************************')
+                            print('Ingrese una opción numerica')
+                            print('*******************************')
                 else:
                     pass
             elif opcion_menu == 8:
@@ -178,4 +244,10 @@ while (encontrado != 0):
         print('Recuerde que tiene que ser un valor numerico')
         print('Si no cuenta con el contacte al administrador')
         print('************************************************')
-        print()      
+        print()
+
+def ordernarPeliculas(data_cartelera):
+    pass
+
+def consultarPelicula(data_cartelera):
+    pass

@@ -39,8 +39,10 @@ id_cartelera int not null primary key identity(1,1),
 cartelera_pelicula int not null foreign key references peliculas(id_peliculas),
 cartelera_municipio int not null foreign key references municipios(id_municipios),
 cartelera_dia date not null,
-cartelera_inicio float not null,
-cartelera_final float not null,
+cartelera_inicio int not null,
+cartelera_minutos_inicio varchar(2) not null,
+cartelera_final int not null,
+cartelera_minutos_final varchar(2) not null,
 cartelera_status int not null
 )
 
@@ -188,14 +190,16 @@ insert into peliculas values ('Cars 3',100,'AA')
 
 
 -- INSERT CARTELERA - COMPLETED
-insert into cartelera values(1,1,'2020-10-10',20,22,1)
-insert into cartelera values(2,2,'2020-10-10',20,22,1)
-insert into cartelera values(2,11,'2020-10-10',20,22,1)
+insert into cartelera values(1,1,'2020-10-10',20,'00',22,'00',1)
+insert into cartelera values(2,2,'2020-10-10',20,'00',22,'00',1)
+insert into cartelera values(2,11,'2020-10-10',20,'00',22,'00',1)
 
 -- INSERT USUARIOS - COMPLETED (23/10/20)
 insert into usuarios values ('Juan','Perez',1234,'1234',1,1,1)
 insert into usuarios values ('John','Johnson',56789,'56789',2,2,1)
 insert into usuarios values ('Shaneqa','Smith',234,'234',3,2,1)
+insert into usuarios values ('Dave','Grohl',111,'111',12,1,1)
+insert into usuarios values ('Bruno','Camarena',222,'222',22,2,1)
 
 
 -- INSERT RESERVACIONES - COMPLETED (23/10/20)
@@ -208,11 +212,11 @@ select * from municipios
 select * from peliculas
 select * from cartelera
 select * from usuarios
-select * from vistaCarteleraActual
+select * from vistaCarteleraActual where peliculas_nombre = 'The pick of Destiny'
 
 create view vistaCarteleraActual
 as 
-select p.peliculas_nombre,p.peliculas_clasificacion,m.municipio_nombre,e.estados_nombre,p.peliculas_minutos,c.cartelera_inicio,c.cartelera_final
+select p.peliculas_nombre,p.peliculas_clasificacion,m.municipio_nombre,e.estados_nombre,c.cartelera_dia,p.peliculas_minutos,c.cartelera_inicio,c.cartelera_minutos_inicio,c.cartelera_final,c.cartelera_minutos_final
 from cartelera c
 inner join municipios m on c.cartelera_municipio = m.id_municipios
 inner join estados e on m.municipios_estados = e.id_estados
