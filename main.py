@@ -78,6 +78,9 @@ def quickSort(arr, low, high):
         quickSort(arr, pi+1, high)
 
 def consultarCartelera(data_cartelera):
+    pass
+
+def consultarPelicula(data_cartelera):
     print('Pelicula: ', data_cartelera[0][0])
     print('Clasificación:',data_cartelera[0][1])
     print('Duración: ',data_cartelera[0][5],'minutos')
@@ -132,7 +135,7 @@ def menu_administrador(data_admin):
                                 busqueda_pelicula = "select * from vistaCarteleraActual where peliculas_nombre = '",data_peliculas[opcion_pelicula-1][0],"'"
                                 query_busqueda_pelicula = ''.join(busqueda_pelicula)
                                 data_cartelera_consulta=Connection.read(conn,query_busqueda_pelicula)
-                                consultarCartelera(data_cartelera_consulta)
+                                consultarPelicula(data_cartelera_consulta)
                                 break
                             elif opcion_pelicula == 0:
                                 print()
@@ -247,7 +250,4 @@ while (encontrado != 0):
         print()
 
 def ordernarPeliculas(data_cartelera):
-    pass
-
-def consultarPelicula(data_cartelera):
     pass
