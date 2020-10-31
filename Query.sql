@@ -29,7 +29,8 @@ municipio_nombre varchar(255) not null
 create table peliculas(
 id_peliculas int not null primary key identity(1,1),
 peliculas_nombre varchar(255) not null,
-peliculas_minutos int not null
+peliculas_minutos int not null,
+peliculas_clasificacion varchar(3) not null
 )
 
 -- CREATE TABLE CARTELERA - COMPLETED (16/10/20)
@@ -50,7 +51,7 @@ usuarios_nombre varchar(255) not null,
 usuarios_apellido varchar(255) not null,
 usuarios_usuario int not null,
 usuarios_password varchar(255) not null,
-usuarios_estados int not null foreign key references estados(id_estados),
+usuarios_municipios int not null foreign key references municipios(id_municipios),
 usuarios_tipo int not null,
 usuarios_status int not null
 )
@@ -179,11 +180,11 @@ insert into municipios values ('E','5','Mocorito')
 
 
 -- INSERT PELICULAS - COMPLETED
-insert into peliculas values ('Mulan',120)
-insert into peliculas values ('The pick of Destiny',140)
-insert into peliculas values ('The Lion King',130)
-insert into peliculas values ('Toy Story 4',120)
-insert into peliculas values ('Cars 3',100)
+insert into peliculas values ('Mulan',120,'AA')
+insert into peliculas values ('The pick of Destiny',140,'B15')
+insert into peliculas values ('The Lion King',130,'AA')
+insert into peliculas values ('Toy Story 4',120,'AA')
+insert into peliculas values ('Cars 3',100,'AA')
 
 
 -- INSERT CARTELERA - COMPLETED
@@ -211,7 +212,7 @@ select * from vistaCarteleraActual
 
 create view vistaCarteleraActual
 as 
-select p.peliculas_nombre,m.municipio_nombre,c.cartelera_municipio,e.estados_nombre,p.peliculas_minutos,c.cartelera_inicio,c.cartelera_final
+select p.peliculas_nombre,p.peliculas_clasificacion,m.municipio_nombre,e.estados_nombre,p.peliculas_minutos,c.cartelera_inicio,c.cartelera_final
 from cartelera c
 inner join municipios m on c.cartelera_municipio = m.id_municipios
 inner join estados e on m.municipios_estados = e.id_estados
@@ -221,16 +222,18 @@ go
 
 create view vistaUsuarios
 as
-select u.usuarios_nombre,usuarios_apellido,u.usuarios_usuario,u.usuarios_password,e.estados_nombre,u.usuarios_tipo,u.usuarios_status
+select u.usuarios_nombre,usuarios_apellido,u.usuarios_usuario,u.usuarios_password,e.estados_nombre,m.municipio_nombre,u.usuarios_tipo,u.usuarios_status
 from usuarios u
-inner join estados e on u.usuarios_estados = e.id_estados
+inner join municipios m on u.usuarios_municipios = m.id_municipios
+inner join estados e on m.municipios_estados = e.id_estados
 go
 
 -- DROP TABLES  -- DROP ONLY IF NEEDED
 drop table estados
 drop table municipios
 drop table peliculas
-drop view dbo.vista_cartelera_actual
+drop view dbo.vistaCarteleraActual
+drop view dbo.vistaUsuarios
 drop database EstructuraAlgoritmos
 
 -- CREATE DATABASE -- CREATE ONLY IF NEEDED
