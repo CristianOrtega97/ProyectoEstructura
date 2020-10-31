@@ -59,7 +59,7 @@ def menu_administrador(data_admin):
     opcion_menu=1
     print("Bienvenido Admin: ",data_admin[0]," ",data_admin[1])
     print("Sucursal: ", data_admin[5])
-    while(opcion_menu!=0):
+    while(opcion_menu!=8):
         try:
             print()
             print('Seleccione alguna de las siguientes Opciones: ')
@@ -72,9 +72,22 @@ def menu_administrador(data_admin):
             print('7.- Consultar Cartelera')
             print('8.- Cerrar sesión')
             opcion_menu=int(input('Respuesta: '))
-            if opcion_menu > 0 and opcion_menu <= 8:
-                pass
-            elif opcion_menu == 0:
+            if opcion_menu > 0 and opcion_menu <= 7:
+                if opcion_menu == 1:
+                    pass
+                elif opcion_menu == 2:
+                    pass
+                elif opcion_menu == 3:
+                    pass
+                elif opcion_menu == 4:
+                    pass
+                elif opcion_menu == 5:
+                    pass
+                elif opcion_menu == 6:
+                    pass
+                else:
+                    pass
+            elif opcion_menu == 8:
                 print()
                 print('--------------------')
                 print('Cerró su sesión')
@@ -95,15 +108,51 @@ def menu_administrador(data_admin):
 
 def menu_cliente(data_customer):
     print("Bienvenido Cliente: ",data_customer[0]," ",data_customer[1])
-    print()
-    print('Seleccione alguna de las siguientes Opciones: ')
-    print('1.- Buscar película por nombre')
-    print('2.- Buscar película por clasificación')
-    print('3.- Buscar película por género')
-    print('4.- Ordenar cartelera (A y D)')
-    print('5.- Consultar película')
-    print('6.- Consultar cartelera')
-    print('7.- Salir')
+    print('Sucursal Preferida: ', data_customer[5])
+    print('Estado: ',data_customer[4])
+    opcion_menu=1
+    while(opcion_menu!=7):
+        try:
+            print()
+            print('Seleccione alguna de las siguientes Opciones: ')
+            print('1.- Buscar película por nombre')
+            print('2.- Buscar película por clasificación')
+            print('3.- Buscar película por género')
+            print('4.- Ordenar cartelera (A y D)')
+            print('5.- Consultar película')
+            print('6.- Consultar cartelera')
+            print('7.- Salir')
+            opcion_menu=int(input('Respuesta: '))
+            if opcion_menu > 0 and opcion_menu <= 6:
+                if opcion_menu == 1:
+                    pass
+                elif opcion_menu == 2:
+                    pass
+                elif opcion_menu == 3:
+                    pass
+                elif opcion_menu == 4:
+                    pass
+                elif opcion_menu == 5:
+                    pass
+                else:
+                    pass
+            elif opcion_menu == 7:
+                print()
+                print('--------------------')
+                print('Cerró su sesión')
+                print('--------------------')
+                print()
+            else:
+                print()
+                print('------------------------------')
+                print('La opción ingresada no existe')
+                print('------------------------------')
+                print()
+        except ValueError:
+            print()
+            print('*******************************')
+            print('Ingrese una opción numerica')
+            print('*******************************')
 
 encontrado = 1
 while (encontrado != 0):
