@@ -1,5 +1,6 @@
 import pyodbc 
 from connection import *
+from datetime import date
 
 #SELECT QUERIES
 query_select_estados='select * from estados'
@@ -49,7 +50,6 @@ def log_in(entrada_usuario,entrada_password,data_usuarios_disponible):
             print('La contraseña es incorrecta, intente de nuevo')
             return 0
 
-
 def seleccion_menu(tipo_usuario):
     if(tipo_usuario == 1):
         pass
@@ -78,6 +78,19 @@ def quickSort(arr, low, high):
         quickSort(arr, pi+1, high)
 
 def consultarCartelera(data_cartelera):
+    if len(data_cartelera)==0:
+         print('----------------------------')
+    else:
+        data_pelicula = data_cartelera.pop()
+        print('--------------------------------------')
+        if str(data_pelicula[4]) == str('2020-10-10'):
+            print('Pelicula: ', data_pelicula[0])
+            print('Clasificación:',data_pelicula[1])
+            print('Duración: ',data_pelicula[5],'minutos')
+            print('Horario: ',int(data_pelicula[6]),':',data_pelicula[7],' - ',int(data_pelicula[8]),':',data_pelicula[9]) 
+            consultarCartelera(data_cartelera)
+
+def ordernarPeliculas(data_cartelera):
     pass
 
 def consultarPelicula(data_cartelera):
@@ -89,7 +102,8 @@ def consultarPelicula(data_cartelera):
             print('----------------------------------------------')
             print('Sucursal: ',data_cartelera[i][2])
             print('Día: ',data_cartelera[i][4])
-            print('Horario: ',int(data_cartelera[i][6]),':',data_cartelera[i][7],' - ',int(data_cartelera[i][8]),':',data_cartelera[i][9]) 
+            print('Horario: ',int(data_cartelera[i][6]),':',data_cartelera[i][7],' - ',int(data_cartelera[i][8]),':',data_cartelera[i][9])
+            
 
 def menu_administrador(data_admin):
     opcion_menu=1
@@ -154,8 +168,54 @@ def menu_administrador(data_admin):
                             print('*******************************')
                             print('Ingrese una opción numerica')
                             print('*******************************')
+                elif opcion_menu == 7:
+                    estado_usuario = encontrado[4]
+                    tuple_data_ciudades = "select municipio_nombre from vistaMunicipios where estados_nombre ='",estado_usuario,"'"
+                    query_data_ciudades = ''.join(tuple_data_ciudades)
+                    data_ciudades = Connection.read(conn,query_data_ciudades)
+                    n = len(data_ciudades)
+                    print("Sorted array is:",data_ciudades)
+                    quickSort(data_ciudades, 0, n-1)
+                    opcion_ciudad=1
+                    while(opcion_ciudad!=0):
+                        try:
+                            print('Seleccione la ciudad a buscar: ')
+                            for i in range(len(data_ciudades)):
+                                print(i+1,'.-',data_ciudades[i][0])
+                            print('0.- Salir')
+                            opcion_ciudad=int(input('Respuesta: '))
+                            if opcion_ciudad > 0 and opcion_ciudad <= len(data_ciudades): 
+                                busqueda_pelicula = "select * from vistaCarteleraActual where municipio_nombre = '",data_ciudades[opcion_ciudad-1][0],"'"
+                                query_busqueda_pelicula = ''.join(busqueda_pelicula)
+                                data_cartelera_consulta=Connection.read(conn,query_busqueda_pelicula)
+                                print('------------------------------------------------')
+                                print('Sucursal: ',data_cartelera_consulta[0][2])
+                                print('Día: ',d2)
+                                consultarCartelera(data_cartelera_consulta)
+                                break
+                            elif opcion_ciudad == 0:
+                                print()
+                                print('--------------------')
+                                print('Regresando al menú anterior')
+                                print('--------------------')
+                                print()
+                            else:
+                                print()
+                                print('------------------------------')
+                                print('La opción ingresada no existe')
+                                print('------------------------------')
+                                print()
+                        except ValueError:
+                            print()
+                            print('*******************************')
+                            print('Ingrese una opción numerica')
+                            print('*******************************')
                 else:
-                    pass
+                    print()
+                    print('------------------------------')
+                    print('La opción ingresada no existe')
+                    print('------------------------------')
+                    print()
             elif opcion_menu == 8:
                 print()
                 print('--------------------')
@@ -224,6 +284,10 @@ def menu_cliente(data_customer):
             print('*******************************')
 
 encontrado = 1
+today = date.today()
+d1 = today.strftime("%Y-%m-%d")
+d2 = today.strftime("%d-%m-%Y")
+print(d1)
 while (encontrado != 0):
     try:
         entrada_usuario=int(input('Ingrese su usuario o "0" para salir: '))
@@ -248,6 +312,3 @@ while (encontrado != 0):
         print('Si no cuenta con el contacte al administrador')
         print('************************************************')
         print()
-
-def ordernarPeliculas(data_cartelera):
-    pass
