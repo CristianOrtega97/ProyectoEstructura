@@ -113,52 +113,6 @@ insert into municipios values ('F','3','Ecatepec de Morelos')
 insert into municipios values ('G','3','Naucalpan de Juárez')
 insert into municipios values ('H','3','Morelos')
 insert into municipios values ('I','3','Texcoco')
-
-
---INSERT INFORMATION
--- INSERT ESTADOS - COMPLETED (16/10/20)
-insert into estados values ('J11','Jalisco')
-insert into estados values ('N11','Nuevo León')
-insert into estados values ('E11','Estado de México')
-insert into estados values ('C11','Chihuahua')
-insert into estados values ('S11','Sinaloa')
-
-
--- INSERT MUNICIPIOS - COMPLETED (16/10/20) 
--- JALISCO - COMPLETED
-insert into municipios values ('A','1','Guadalajara')
-insert into municipios values ('B','1','Zapopan')
-insert into municipios values ('C','1','Tlaquepaque')
-insert into municipios values ('D','1','Tonalá')
-insert into municipios values ('E','1','Zapotlanejo')
-insert into municipios values ('F','1','Tlajomulco')
-insert into municipios values ('G','1','Ayotlán')
-insert into municipios values ('H','1','Tequila')
-insert into municipios values ('I','1','Ocotlán')
-insert into municipios values ('J','1','Puerto Vallarta')
-
--- NUEVO LEÓN - COMPLETED
-insert into municipios values ('A','2','Guadalupe')
-insert into municipios values ('B','2','Abasolo')
-insert into municipios values ('C','2','Apodaca')
-insert into municipios values ('D','2','Ciénega de Flores')
-insert into municipios values ('E','2','General Zaragoza')
-insert into municipios values ('F','2','Iturbide')
-insert into municipios values ('G','2','Juárez')
-insert into municipios values ('H','2','Monterrey')
-insert into municipios values ('I','2','Salinas Victoria')
-insert into municipios values ('J','2','General Zuazua')
-
--- ESTADO DE MÉXICO - COMPLETED
-insert into municipios values ('A','3','Cuautitlán Izcalli')
-insert into municipios values ('B','3','Chalco')
-insert into municipios values ('C','3','Aculco')
-insert into municipios values ('D','3','Atizapán')
-insert into municipios values ('E','3','Chapultepec')
-insert into municipios values ('F','3','Ecatepec de Morelos')
-insert into municipios values ('G','3','Naucalpan de Juárez')
-insert into municipios values ('H','3','Morelos')
-insert into municipios values ('I','3','Texcoco')
 insert into municipios values ('J','3','Toluca')
 
 -- CHIHUAHUA - COMPLETED
@@ -224,6 +178,8 @@ inner join peliculas p on c.cartelera_pelicula = p.id_peliculas
 go
 
 
+select * from vistaCarteleraActual where municipio_nombre = 'Guadalajara'
+
 create view vistaUsuarios
 as
 select u.usuarios_nombre,usuarios_apellido,u.usuarios_usuario,u.usuarios_password,e.estados_nombre,m.municipio_nombre,u.usuarios_tipo,u.usuarios_status
@@ -231,6 +187,15 @@ from usuarios u
 inner join municipios m on u.usuarios_municipios = m.id_municipios
 inner join estados e on m.municipios_estados = e.id_estados
 go
+
+create view vistaMunicipios
+as
+select m.municipio_nombre,e.estados_nombre
+from municipios m
+inner join estados e on m.municipios_estados = e.id_estados
+go
+
+select * from vistaMunicipios where estados_nombre = 'Jalisco'
 
 -- DROP TABLES  -- DROP ONLY IF NEEDED
 drop table estados
