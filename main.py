@@ -50,9 +50,30 @@ def log_in(entrada_usuario,entrada_password,data_usuarios_disponible):
             print('La contraseña es incorrecta, intente de nuevo')
             return 0
 
+#Converts minutes to hours
+def convert_time(duration_minutes):
+    array_duration = []
+    hours = 0
+    minutes = 0
+    if duration_minutes > 59:
+        while duration_minutes > 59:
+            duration_minutes -= 60
+            hours += 1
+        minutes = duration_minutes
+        array_duration.append(hours)
+        array_duration.append(minutes)
+        return array_duration
+    else:
+        array_duration.append(hours)
+        minutes = duration_minutes
+        array_duration.append(minutes)
+        return array_duration
+
 #Esta Función solo agrega las películas pero no a la cartelera
-def insert_pelicula():
-    pass
+def insert_pelicula(new_pelicula):
+    query_agregar_pelicula = str('INSERT INTO peliculas VALUES ('+"'"+new_pelicula[0]+"',"+str(new_pelicula[1])+",'"+new_pelicula[2]+"')")
+    Connection.add(conn,query_agregar_pelicula)
+
 
 #Valida el arreglo de peliculas existentes despues de haber agregado el tiempo
 def validador_tiempo():
@@ -148,9 +169,14 @@ def menu_administrador(data_admin):
             opcion_menu=int(input('Respuesta: '))
             if opcion_menu > 0 and opcion_menu <= 7:
                 if opcion_menu == 1:
-                    pass
+                    new_pelicula = []
+                    new_pelicula.append(input('Ingrese el nombre de la película: '))
+                    new_pelicula.append(int(input('Igrese la duración en minutos de la pelicula: ')))
+                    new_pelicula.append(input('Ingrese la clasificación de la película: '))
+                    insert_pelicula(new_pelicula)
                 elif opcion_menu == 2:
-                    pass
+                    municipio_usuario = encontrado[5]
+                    
                 elif opcion_menu == 3:
                     pass
                 elif opcion_menu == 4:
@@ -170,9 +196,11 @@ def menu_administrador(data_admin):
                             print('0.- Salir')
                             opcion_pelicula=int(input('Respuesta: '))
                             if opcion_pelicula > 0 and opcion_pelicula <= len(data_peliculas): 
-                                busqueda_pelicula = "select * from vistaCarteleraActual where peliculas_nombre = '",data_peliculas[opcion_pelicula-1][0],"'"
+                                busqueda_pelicula = str("select * from vistaCarteleraActual where peliculas_nombre = '"+str(data_peliculas[opcion_pelicula-1][0])+"'"+" AND cartelera_status = 1")
                                 query_busqueda_pelicula = ''.join(busqueda_pelicula)
                                 data_cartelera_consulta=Connection.read(conn,query_busqueda_pelicula)
+                                print(busqueda_pelicula)
+                                print("DATA:" , data_cartelera_consulta)
                                 consultarPelicula(data_cartelera_consulta)
                                 break
                             elif opcion_pelicula == 0:
@@ -194,8 +222,8 @@ def menu_administrador(data_admin):
                             print('*******************************')
                 elif opcion_menu == 7:
                     estado_usuario = encontrado[4]
-                    tuple_data_ciudades = "select municipio_nombre from vistaMunicipios where estados_nombre ='",estado_usuario,"'"
-                    query_data_ciudades = ''.join(tuple_data_ciudades)
+                    data_ciudades = str("select municipio_nombre from vistaMunicipios where estados_nombre ='"+estado_usuario+"'")
+                    query_data_ciudades = ''.join(data_ciudades)
                     data_ciudades = Connection.read(conn,query_data_ciudades)
                     n = len(data_ciudades)
                     print("Sorted array is:",data_ciudades)
@@ -209,7 +237,7 @@ def menu_administrador(data_admin):
                             print('0.- Salir')
                             opcion_ciudad=int(input('Respuesta: '))
                             if opcion_ciudad > 0 and opcion_ciudad <= len(data_ciudades): 
-                                busqueda_pelicula = "select * from vistaCarteleraActual where municipio_nombre = '",data_ciudades[opcion_ciudad-1][0],"'"
+                                busqueda_pelicula = str("select * from vistaCarteleraActual where municipio_nombre = '"+str(data_ciudades[opcion_ciudad-1][0])+"'")
                                 query_busqueda_pelicula = ''.join(busqueda_pelicula)
                                 data_cartelera_consulta=Connection.read(conn,query_busqueda_pelicula)
                                 print('------------------------------------------------')

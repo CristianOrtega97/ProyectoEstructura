@@ -178,7 +178,7 @@ inner join peliculas p on c.cartelera_pelicula = p.id_peliculas
 go
 
 
-select * from vistaCarteleraActual where municipio_nombre = 'Guadalajara'
+select * from vistaCarteleraActual where municipio_nombre = 'Guadalajara'  AND cartelera_status = 1
 
 create view vistaUsuarios
 as
