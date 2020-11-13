@@ -50,6 +50,30 @@ def log_in(entrada_usuario,entrada_password,data_usuarios_disponible):
             print('La contraseña es incorrecta, intente de nuevo')
             return 0
 
+#Esta Función solo agrega las películas pero no a la cartelera
+def insert_pelicula():
+    pass
+
+#Valida el arreglo de peliculas existentes despues de haber agregado el tiempo
+def validador_tiempo():
+    pass
+
+#Agrega el tiempo de break en las peliculas
+def agregador_break():
+    pass
+
+def update_pelicula():
+    pass
+
+def update_cartelera():
+    pass
+
+def remove_pelicula():
+    pass
+
+def remove_from_cartelera():
+    pass
+
 def seleccion_menu(tipo_usuario):
     if(tipo_usuario == 1):
         pass
