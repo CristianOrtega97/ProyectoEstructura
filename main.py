@@ -1,4 +1,4 @@
-#SOLO YO Y DIOS SABEMOS COMO FUNCIONA ESTE CÓDIGO, Y FUTURAMENTE SOLO DIOS
+#SOLO YO Y DIOS SABEMOS COMO FUNCIONA ESTE CÓDIGO, Y EN UN FUTURO, SOLO DIOS
 
 import pyodbc 
 from connection import *
@@ -71,32 +71,54 @@ def get_time(duration_time,movie_schedule):
 
 #Verifica si la película puede ser agregada
 def time_verifier(duration_minutes,movie_schedule):
+    data_temp1 = 25
+    data_temp2 = 61
     status = True
     print("DURATION MINUTES: ", duration_minutes)
     print("MOVIE SCHEDULE: ", movie_schedule)
     time_compare = []
     date_compare = []
-    time_compare.append(int(input("Inserte la hora de la pelicula HH: ")))
-    time_compare.append(int(input("Inserte la hora de la pelicula MM: ")))
-    date_compare.append(str(input("Inserte la fecha de la pelicula YYYY-MM-DD: ")))
-    sala_compare = int(input("Ingrese el numero de sala: "))
-    status = True
-    while len(movie_schedule) != 0:
-        print("ENTRA WHILE")
-        movie_to_check = movie_schedule.pop(0)
-        if sala_compare == movie_to_check[11]:
-            print("ENTRÉ SALA")
-            if str(date_compare[0]) == str(movie_to_check[4]):
-                time_to_verify = get_time(duration_minutes,movie_to_check)
-                if time_to_verify[0] < time_compare[0]:
-                    print("Si entro hora")
-                elif time_to_verify[0] == time_compare[0]:
-                    pass
-                else:
-                    pass
+    try:
+        while(data_temp1 > 25 or data_temp1<0 or data_temp2 > 60 or data_temp2 < 0):
+            data_temp1 = int(input("Inserte la hora de la pelicula HH: "))
+            data_temp2 = int(input("Inserte la hora de la pelicula MM: "))
+            if data_temp1 > 25 or data_temp1<0 and data_temp2 > 60 or data_temp2 < 0:
+                print("Los horarios tienen que ser ingresados en un formato de 24 hrs")
+                print("!!! Vuelva a intentarlo !!!!")
+            else:
+                time_compare.append(data_temp1)
+                time_compare.append(data_temp2)
+        date_compare.append(str(input("Inserte la fecha de la pelicula YYYY-MM-DD: ")))
+        sala_compare = int(input("Ingrese el numero de sala: "))
+        status = True
+        if len(movie_schedule) != 0:
+            while len(movie_schedule) != 0:
+                movie_to_check = movie_schedule.pop(0)
+                if sala_compare == movie_to_check[11]:
+                    if str(date_compare[0]) == str(movie_to_check[4]):
+                        time_to_verify = get_time(duration_minutes,movie_to_check)
+                        print("TIME TO VERIFY: ",time_to_verify)
+                        if time_to_verify[0] < time_compare[0]:
+                                if time_to_verify[0]-duration_minutes[0] <= movie_to_check[6]:
+                                    pass
+                                else:
+                                    pass
+                        elif time_to_verify[0] == time_compare[0]:
+                            if time_to_verify[1] >= time_compare[1]:
+                                pass
+                            else:
+                                print("Se cruzan las películas, vuelva a intentarlo más tarde")
+                        else:
+                            pass
         else:
-            print("No entré sala")
-    return status
+            pass
+        if status:
+            pass
+        else:
+            pass
+    except:
+        print("Ingrese los datos de forma numerica con el formato especificado")
+        time_verifier(duration_minutes,movie_schedule)
     
 
 
@@ -110,6 +132,24 @@ def convert_time(duration_minutes):
             duration_minutes -= 60
             hours += 1
         minutes = duration_minutes
+        array_duration.append(hours)
+        array_duration.append(minutes)
+        return array_duration
+    else:
+        array_duration.append(hours)
+        minutes = duration_minutes
+        array_duration.append(minutes)
+        return array_duration
+
+def convert_minus_time(duration_minutes):
+    array_duration = []
+    hours = 0
+    minutes = 0
+    if duration_minutes > 59:
+        while duration_minutes > 59:
+            duration_minutes -= 60
+            hours -= 1
+        minutes = duration_minutes * -1
         array_duration.append(hours)
         array_duration.append(minutes)
         return array_duration
@@ -219,11 +259,15 @@ def menu_administrador(data_admin):
             opcion_menu=int(input('Respuesta: '))
             if opcion_menu > 0 and opcion_menu <= 7:
                 if opcion_menu == 1:
-                    new_pelicula = []
-                    new_pelicula.append(input('Ingrese el nombre de la película: '))
-                    new_pelicula.append(int(input('Igrese la duración en minutos de la pelicula: ')))
-                    new_pelicula.append(input('Ingrese la clasificación de la película: '))
-                    insert_pelicula(new_pelicula)
+                    try:
+                        new_pelicula = []
+                        new_pelicula.append(input('Ingrese el nombre de la película: '))
+                        new_pelicula.append(int(input('Igrese la duración en minutos de la pelicula: ')))
+                        new_pelicula.append(input('Ingrese la clasificación de la película: '))
+                        insert_pelicula(new_pelicula)
+                    except:
+                        print("Uno o mas valores ingresados son erroneos, vuelva a intentarlo")
+                        break
                 elif opcion_menu == 2:
                     status_pelicula = True
                     municipio_usuario = encontrado[5]
@@ -243,13 +287,8 @@ def menu_administrador(data_admin):
                                 data_cartelera_consulta=Connection.read(conn,query_busqueda_pelicula)
                                 if len(data_cartelera_consulta) != 0:
                                     movie_time = data_cartelera_consulta[0][5]    
-                                    #HERE GOES THE FUNCTION PARAMETERS
                                     duration_time = convert_time(movie_time+30)
-                                    status_pelicula=time_verifier(duration_time,data_cartelera_consulta)
-                                    if status_pelicula:
-                                        pass
-                                    else:
-                                        pass
+                                    time_verifier(duration_time,data_cartelera_consulta)
                                 else:
                                     pass
                                 break
