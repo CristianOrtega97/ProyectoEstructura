@@ -43,7 +43,8 @@ cartelera_inicio int not null,
 cartelera_minutos_inicio varchar(2) not null,
 cartelera_final int not null,
 cartelera_minutos_final varchar(2) not null,
-cartelera_status int not null
+cartelera_status int not null,
+cartelera_sala int not null
 )
 
 -- CREATE TABLE USUARIOS - COMPLETED (23/10/20)
@@ -144,9 +145,9 @@ insert into peliculas values ('Cars 3',100,'AA')
 
 
 -- INSERT CARTELERA - COMPLETED
-insert into cartelera values(1,1,'2020-10-10',20,'00',22,'00',1)
-insert into cartelera values(2,2,'2020-10-10',20,'00',22,'00',1)
-insert into cartelera values(2,11,'2020-10-10',20,'00',22,'00',1)
+insert into cartelera values(1,1,'2020-10-10',20,'00',22,'00',1,1)
+insert into cartelera values(2,2,'2020-10-10',20,'00',22,'00',1,1)
+insert into cartelera values(2,11,'2020-10-10',20,'00',22,'00',1,1)
 
 -- INSERT USUARIOS - COMPLETED (23/10/20)
 insert into usuarios values ('Juan','Perez',1234,'1234',1,1,1)
@@ -170,7 +171,7 @@ select * from vistaCarteleraActual where peliculas_nombre = 'The pick of Destiny
 
 create view vistaCarteleraActual
 as 
-select p.peliculas_nombre,p.peliculas_clasificacion,m.municipio_nombre,e.estados_nombre,c.cartelera_dia,p.peliculas_minutos,c.cartelera_inicio,c.cartelera_minutos_inicio,c.cartelera_final,c.cartelera_minutos_final,c.cartelera_status
+select p.peliculas_nombre,p.peliculas_clasificacion,m.municipio_nombre,e.estados_nombre,c.cartelera_dia,p.peliculas_minutos,c.cartelera_inicio,c.cartelera_minutos_inicio,c.cartelera_final,c.cartelera_minutos_final,c.cartelera_status,c.cartelera_sala
 from cartelera c
 inner join municipios m on c.cartelera_municipio = m.id_municipios
 inner join estados e on m.municipios_estados = e.id_estados
