@@ -73,7 +73,6 @@ def get_time(duration_time,movie_schedule):
 def time_verifier(duration_minutes,movie_schedule):
     data_temp1 = 25
     data_temp2 = 61
-    status = True
     print("DURATION MINUTES: ", duration_minutes)
     print("MOVIE SCHEDULE: ", movie_schedule)
     time_compare = []
@@ -90,7 +89,6 @@ def time_verifier(duration_minutes,movie_schedule):
                 time_compare.append(data_temp2)
         date_compare.append(str(input("Inserte la fecha de la pelicula YYYY-MM-DD: ")))
         sala_compare = int(input("Ingrese el numero de sala: "))
-        status = True
         if len(movie_schedule) != 0:
             while len(movie_schedule) != 0:
                 movie_to_check = movie_schedule.pop(0)
@@ -98,24 +96,22 @@ def time_verifier(duration_minutes,movie_schedule):
                     if str(date_compare[0]) == str(movie_to_check[4]):
                         time_to_verify = get_time(duration_minutes,movie_to_check)
                         print("TIME TO VERIFY: ",time_to_verify)
+                        #TIME ENTERED MUST BE HIGHER THAN THE ONE FOUND
                         if time_to_verify[0] < time_compare[0]:
-                                if time_to_verify[0]-duration_minutes[0] <= movie_to_check[6]:
-                                    pass
-                                else:
-                                    pass
+                                pass
+                        #TIME ENTERED IS THE SAME, THIS WILL VALIDATE THAT MINUTES ARE NOT CROSSING
                         elif time_to_verify[0] == time_compare[0]:
                             if time_to_verify[1] >= time_compare[1]:
                                 pass
                             else:
-                                print("Se cruzan las películas, vuelva a intentarlo más tarde")
+                                print("Se cruzan las películas, vuelva a intentarlo con otro horario")
+                        #IF movie is EARLY
                         else:
-                            pass
-        else:
-            pass
-        if status:
-            pass
-        else:
-            pass
+                            #check if it can be plaid before start
+                            if time_to_verify[0] <= movie_to_check[6]:
+                                pass
+                            else:
+                                print("Se cruzan las películas, vuelva a intentarlo con otro horario")
     except:
         print("Ingrese los datos de forma numerica con el formato especificado")
         time_verifier(duration_minutes,movie_schedule)
@@ -158,6 +154,9 @@ def convert_minus_time(duration_minutes):
         minutes = duration_minutes
         array_duration.append(minutes)
         return array_duration
+
+def insert_cartelera():
+    pass
 
 #Esta Función solo agrega las películas pero no a la cartelera
 def insert_pelicula(new_pelicula):
@@ -269,7 +268,6 @@ def menu_administrador(data_admin):
                         print("Uno o mas valores ingresados son erroneos, vuelva a intentarlo")
                         break
                 elif opcion_menu == 2:
-                    status_pelicula = True
                     municipio_usuario = encontrado[5]
                     n = len(data_peliculas)
                     quickSort(data_peliculas, 0, n-1)
