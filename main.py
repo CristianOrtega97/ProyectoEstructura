@@ -1,4 +1,5 @@
-#SOLO YO Y DIOS SABEMOS COMO FUNCIONA ESTE CÓDIGO, Y EN UN FUTURO, SOLO DIOS
+#Author: Emanuel Camarena
+#Slack: emanuelc.dev
 
 import pyodbc 
 from connection import *
@@ -71,10 +72,13 @@ def get_time(duration_time,movie_schedule):
 
 #Verifica si la película puede ser agregada
 def time_verifier(duration_minutes,movie_schedule):
+    original_data = movie_schedule
+    movie_schedule_temp = movie_schedule
+    status = False
     data_temp1 = 25
     data_temp2 = 61
     print("DURATION MINUTES: ", duration_minutes)
-    print("MOVIE SCHEDULE: ", movie_schedule)
+    print("MOVIE SCHEDULE: ", original_data)
     time_compare = []
     date_compare = []
     try:
@@ -89,32 +93,37 @@ def time_verifier(duration_minutes,movie_schedule):
                 time_compare.append(data_temp2)
         date_compare.append(str(input("Inserte la fecha de la pelicula YYYY-MM-DD: ")))
         sala_compare = int(input("Ingrese el numero de sala: "))
-        if len(movie_schedule) != 0:
-            while len(movie_schedule) != 0:
-                movie_to_check = movie_schedule.pop(0)
+        if len(movie_schedule_temp) != 0:
+            while len(movie_schedule_temp) != 0:
+                movie_to_check = movie_schedule_temp.pop(0)
                 if sala_compare == movie_to_check[11]:
                     if str(date_compare[0]) == str(movie_to_check[4]):
                         time_to_verify = get_time(duration_minutes,movie_to_check)
-                        print("TIME TO VERIFY: ",time_to_verify)
                         #TIME ENTERED MUST BE HIGHER THAN THE ONE FOUND
                         if time_to_verify[0] < time_compare[0]:
-                                pass
+                                status = True
                         #TIME ENTERED IS THE SAME, THIS WILL VALIDATE THAT MINUTES ARE NOT CROSSING
                         elif time_to_verify[0] == time_compare[0]:
-                            if time_to_verify[1] >= time_compare[1]:
-                                pass
+                            if time_to_verify[1] <= time_compare[1]:
+                                status = True
                             else:
                                 print("Se cruzan las películas, vuelva a intentarlo con otro horario")
+                                return False
                         #IF movie is EARLY
                         else:
                             #check if it can be plaid before start
                             if time_to_verify[0] <= movie_to_check[6]:
-                                pass
+                                status = True
                             else:
                                 print("Se cruzan las películas, vuelva a intentarlo con otro horario")
+                                return False
+        else:
+            print("Se cruzan las películas, vuelva a intentarlo con otro horario")
+            return False
+        return status
     except:
         print("Ingrese los datos de forma numerica con el formato especificado")
-        time_verifier(duration_minutes,movie_schedule)
+        return False
     
 
 
@@ -257,6 +266,7 @@ def menu_administrador(data_admin):
             print('8.- Cerrar sesión')
             opcion_menu=int(input('Respuesta: '))
             if opcion_menu > 0 and opcion_menu <= 7:
+                #Opción 1
                 if opcion_menu == 1:
                     try:
                         new_pelicula = []
@@ -267,6 +277,7 @@ def menu_administrador(data_admin):
                     except:
                         print("Uno o mas valores ingresados son erroneos, vuelva a intentarlo")
                         break
+                #Opcion 2
                 elif opcion_menu == 2:
                     municipio_usuario = encontrado[5]
                     n = len(data_peliculas)
@@ -286,9 +297,15 @@ def menu_administrador(data_admin):
                                 if len(data_cartelera_consulta) != 0:
                                     movie_time = data_cartelera_consulta[0][5]    
                                     duration_time = convert_time(movie_time+30)
-                                    time_verifier(duration_time,data_cartelera_consulta)
+                                    status=time_verifier(duration_time,data_cartelera_consulta)
+                                    if status == True:
+                                        print("True")
+                                    else:
+                                        print("False")
+                                        break
                                 else:
                                     pass
+
                                 break
                             elif opcion_pelicula == 0:
                                 print()
@@ -307,12 +324,60 @@ def menu_administrador(data_admin):
                             print('*******************************')
                             print('Ingrese una opción numerica')
                             print('*******************************')
+                #Opcion 3
                 elif opcion_menu == 3:
-                    pass
+                    municipio_usuario = encontrado[5]
+                    n = len(data_peliculas)
+                    quickSort(data_peliculas, 0, n-1)
+                    opcion_pelicula=1
+                    while(opcion_pelicula!=0):
+                        try:
+                            print('Seleccione la pelicula a agregar: ')
+                            for i in range(len(data_peliculas)):
+                                print(i+1,'.-',data_peliculas[i][0])
+                            print('0.- Salir')
+                            opcion_pelicula=int(input('Respuesta: '))
+                            if opcion_pelicula > 0 and opcion_pelicula <= len(data_peliculas): 
+                                busqueda_pelicula = str("select * from vistaCarteleraActual where peliculas_nombre = '"+str(data_peliculas[opcion_pelicula-1][0])+"'"+" AND cartelera_status = 1 AND municipio_nombre ='" + municipio_usuario+"'")
+                                query_busqueda_pelicula = ''.join(busqueda_pelicula)
+                                data_cartelera_consulta=Connection.read(conn,query_busqueda_pelicula)
+                                if len(data_cartelera_consulta) != 0:
+                                    movie_time = data_cartelera_consulta[0][5]    
+                                    duration_time = convert_time(movie_time+30)
+                                    status=time_verifier(duration_time,data_cartelera_consulta)
+                                    if status == True:
+                                        print("True")
+                                    else:
+                                        print("False")
+                                        break
+                                else:
+                                    print("La película no está en cartelera")
+                                    print("Intente agregarla en la opción 2")
+                                break
+                            elif opcion_pelicula == 0:
+                                print()
+                                print('--------------------')
+                                print('Regresando al menú anterior')
+                                print('--------------------')
+                                print()
+                            else:
+                                print()
+                                print('------------------------------')
+                                print('La opción ingresada no existe')
+                                print('------------------------------')
+                                print()
+                        except ValueError:
+                            print()
+                            print('*******************************')
+                            print('Ingrese una opción numerica')
+                            print('*******************************')
+                #Opción 4
                 elif opcion_menu == 4:
                     pass
+                #Opción 5
                 elif opcion_menu == 5:
                     pass
+                #Opción 6
                 elif opcion_menu == 6:
                     n = len(data_peliculas)
                     quickSort(data_peliculas, 0, n-1)
@@ -349,6 +414,7 @@ def menu_administrador(data_admin):
                             print('*******************************')
                             print('Ingrese una opción numerica')
                             print('*******************************')
+                #Opción 7
                 elif opcion_menu == 7:
                     estado_usuario = encontrado[4]
                     data_ciudades = str("select municipio_nombre from vistaMunicipios where estados_nombre ='"+estado_usuario+"'")
@@ -397,6 +463,7 @@ def menu_administrador(data_admin):
                     print('La opción ingresada no existe')
                     print('------------------------------')
                     print()
+            #Opción 8
             elif opcion_menu == 8:
                 print()
                 print('--------------------')
