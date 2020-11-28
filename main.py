@@ -71,62 +71,49 @@ def get_time(duration_time,movie_schedule):
         return new_time
 
 #Verifica si la película puede ser agregada
-def time_verifier(duration_minutes,movie_schedule):
+def time_verifier(duration_minutes,movie_schedule,data_movie):
+    time_compare = []
     original_data = movie_schedule
     movie_schedule_temp = movie_schedule
-    status = False
-    data_temp1 = 25
-    data_temp2 = 61
+    print("DATA MOVIE:", data_movie)
+    time_compare.append(data_movie[0])
+    time_compare.append(data_movie[1])
+    date_compare = data_movie[2]
+    sala_compare = data_movie[3]
     print("DURATION MINUTES: ", duration_minutes)
     print("MOVIE SCHEDULE: ", original_data)
-    time_compare = []
-    date_compare = []
-    try:
-        while(data_temp1 > 25 or data_temp1<0 or data_temp2 > 60 or data_temp2 < 0):
-            data_temp1 = int(input("Inserte la hora de la pelicula HH: "))
-            data_temp2 = int(input("Inserte la hora de la pelicula MM: "))
-            if data_temp1 > 25 or data_temp1<0 and data_temp2 > 60 or data_temp2 < 0:
-                print("Los horarios tienen que ser ingresados en un formato de 24 hrs")
-                print("!!! Vuelva a intentarlo !!!!")
-            else:
-                time_compare.append(data_temp1)
-                time_compare.append(data_temp2)
-        date_compare.append(str(input("Inserte la fecha de la pelicula YYYY-MM-DD: ")))
-        sala_compare = int(input("Ingrese el numero de sala: "))
-        if len(movie_schedule_temp) != 0:
-            while len(movie_schedule_temp) != 0:
-                movie_to_check = movie_schedule_temp.pop(0)
-                if sala_compare == movie_to_check[11]:
-                    if str(date_compare[0]) == str(movie_to_check[4]):
-                        time_to_verify = get_time(duration_minutes,movie_to_check)
-                        #TIME ENTERED MUST BE HIGHER THAN THE ONE FOUND
-                        if time_to_verify[0] < time_compare[0]:
-                                status = True
-                        #TIME ENTERED IS THE SAME, THIS WILL VALIDATE THAT MINUTES ARE NOT CROSSING
-                        elif time_to_verify[0] == time_compare[0]:
-                            if time_to_verify[1] <= time_compare[1]:
-                                status = True
-                            else:
-                                print("Se cruzan las películas, vuelva a intentarlo con otro horario")
-                                return False
-                        #IF movie is EARLY
+    if len(movie_schedule_temp) != 0:
+        while len(movie_schedule_temp) != 0:
+            movie_to_check = movie_schedule_temp.pop(0)
+            if sala_compare == movie_to_check[11]:
+                if str(date_compare) == str(movie_to_check[4]):
+                    time_to_verify = get_time(duration_minutes,movie_to_check)
+                    #TIME ENTERED MUST BE HIGHER THAN THE ONE FOUND
+                    if time_to_verify[0] < time_compare[0]:
+                            pass
+                    #TIME ENTERED IS THE SAME, THIS WILL VALIDATE THAT MINUTES ARE NOT CROSSING
+                    elif time_to_verify[0] == time_compare[0]:
+                        if time_to_verify[1] <= time_compare[1]:
+                            pass
                         else:
-                            #check if it can be plaid before start
-                            if time_to_verify[0] <= movie_to_check[6]:
-                                status = True
-                            else:
-                                print("Se cruzan las películas, vuelva a intentarlo con otro horario")
-                                return False
-        else:
-            print("Se cruzan las películas, vuelva a intentarlo con otro horario")
-            return False
-        return status
-    except:
-        print("Ingrese los datos de forma numerica con el formato especificado")
+                            print("Se cruzan las películas, vuelva a intentarlo con otro horario")
+                            print("entro aqui 1")
+                            return False
+                    #IF movie is EARLY
+                    else:
+                        #check if it can be plaid before start
+                        if time_to_verify[0] <= movie_to_check[6]:
+                            pass
+                        else:
+                            print("Se cruzan las películas, vuelva a intentarlo con otro horario")
+                            print("entro aqui 2")
+                            return False
+    else:
+        print("Se cruzan las películas, vuelva a intentarlo con otro horario")
+        print("entro aqui 3")
         return False
+    return True
     
-
-
 #Converts minutes to time (hours, minutes)
 def convert_time(duration_minutes):
     array_duration = []
@@ -171,27 +158,6 @@ def insert_cartelera():
 def insert_pelicula(new_pelicula):
     query_agregar_pelicula = str('INSERT INTO peliculas VALUES ('+"'"+new_pelicula[0]+"',"+str(new_pelicula[1])+",'"+new_pelicula[2]+"')")
     Connection.add(conn,query_agregar_pelicula)
-
-
-#Valida el arreglo de peliculas existentes despues de haber agregado el tiempo
-def validador_tiempo():
-    pass
-
-#Agrega el tiempo de break en las peliculas
-def agregador_break():
-    pass
-
-def update_pelicula():
-    pass
-
-def update_cartelera():
-    pass
-
-def remove_pelicula():
-    pass
-
-def remove_from_cartelera():
-    pass
 
 def seleccion_menu(tipo_usuario):
     if(tipo_usuario == 1):
@@ -279,6 +245,9 @@ def menu_administrador(data_admin):
                         break
                 #Opcion 2
                 elif opcion_menu == 2:
+                    time_compare = []
+                    data_temp1=25
+                    data_temp2=60
                     municipio_usuario = encontrado[5]
                     n = len(data_peliculas)
                     quickSort(data_peliculas, 0, n-1)
@@ -290,15 +259,33 @@ def menu_administrador(data_admin):
                                 print(i+1,'.-',data_peliculas[i][0])
                             print('0.- Salir')
                             opcion_pelicula=int(input('Respuesta: '))
-                            if opcion_pelicula > 0 and opcion_pelicula <= len(data_peliculas): 
+                            if opcion_pelicula > 0 and opcion_pelicula <= len(data_peliculas):
                                 busqueda_pelicula = str("select * from vistaCarteleraActual where peliculas_nombre = '"+str(data_peliculas[opcion_pelicula-1][0])+"'"+" AND cartelera_status = 1 AND municipio_nombre ='" + municipio_usuario+"'")
                                 query_busqueda_pelicula = ''.join(busqueda_pelicula)
                                 data_cartelera_consulta=Connection.read(conn,query_busqueda_pelicula)
                                 if len(data_cartelera_consulta) != 0:
+                                    print("ENTRO IF")
                                     movie_time = data_cartelera_consulta[0][5]    
                                     duration_time = convert_time(movie_time+30)
-                                    status=time_verifier(duration_time,data_cartelera_consulta)
-                                    if status == True:
+                                    try:
+                                        while(data_temp1 >= 25 or data_temp1<0 or data_temp2 >= 60 or data_temp2 < 0):
+                                            print("ENTRO WHILE")
+                                            data_temp1=int(input("Inserte la hora de la pelicula HH: "))
+                                            data_temp2=int(input("Inserte la hora de la pelicula MM: "))
+                                            date_compare=str(input("Inserte la fecha de la pelicula YYYY-MM-DD: "))
+                                            sala_compare=int(input("Ingrese el numero de sala: "))
+                                            if data_temp1 > 25 or data_temp1>0 or data_temp2 < 60 or data_temp2 > 0:
+                                                time_compare.append(data_temp1)
+                                                time_compare.append(data_temp2)
+                                                time_compare.append(date_compare)
+                                                time_compare.append(sala_compare)
+                                        if data_temp1 > 25 or data_temp1<0 and data_temp2 > 60 or data_temp2 < 0:
+                                            print("Los horarios tienen que ser ingresados en un formato de 24 hrs")
+                                            print("!!! Vuelva a intentarlo !!!!")
+                                    except:
+                                        print("Ingrese los datos de forma numerica con el formato especificado")
+                                    status=time_verifier(duration_time,data_cartelera_consulta,time_compare)
+                                    if status:
                                         print("True")
                                     else:
                                         print("False")
@@ -326,6 +313,9 @@ def menu_administrador(data_admin):
                             print('*******************************')
                 #Opcion 3
                 elif opcion_menu == 3:
+                    time_compare = []
+                    data_temp1=25
+                    data_temp2=60
                     municipio_usuario = encontrado[5]
                     n = len(data_peliculas)
                     quickSort(data_peliculas, 0, n-1)
@@ -337,22 +327,40 @@ def menu_administrador(data_admin):
                                 print(i+1,'.-',data_peliculas[i][0])
                             print('0.- Salir')
                             opcion_pelicula=int(input('Respuesta: '))
-                            if opcion_pelicula > 0 and opcion_pelicula <= len(data_peliculas): 
+                            if opcion_pelicula > 0 and opcion_pelicula <= len(data_peliculas):
                                 busqueda_pelicula = str("select * from vistaCarteleraActual where peliculas_nombre = '"+str(data_peliculas[opcion_pelicula-1][0])+"'"+" AND cartelera_status = 1 AND municipio_nombre ='" + municipio_usuario+"'")
                                 query_busqueda_pelicula = ''.join(busqueda_pelicula)
                                 data_cartelera_consulta=Connection.read(conn,query_busqueda_pelicula)
                                 if len(data_cartelera_consulta) != 0:
+                                    print("ENTRO IF")
                                     movie_time = data_cartelera_consulta[0][5]    
                                     duration_time = convert_time(movie_time+30)
-                                    status=time_verifier(duration_time,data_cartelera_consulta)
-                                    if status == True:
+                                    try:
+                                        while(data_temp1 >= 25 or data_temp1<0 or data_temp2 >= 60 or data_temp2 < 0):
+                                            print("ENTRO WHILE")
+                                            data_temp1=int(input("Inserte la hora de la pelicula HH: "))
+                                            data_temp2=int(input("Inserte la hora de la pelicula MM: "))
+                                            date_compare=str(input("Inserte la fecha de la pelicula YYYY-MM-DD: "))
+                                            sala_compare=int(input("Ingrese el numero de sala: "))
+                                            if data_temp1 > 25 or data_temp1>0 or data_temp2 < 60 or data_temp2 > 0:
+                                                time_compare.append(data_temp1)
+                                                time_compare.append(data_temp2)
+                                                time_compare.append(date_compare)
+                                                time_compare.append(sala_compare)
+                                        if data_temp1 > 25 or data_temp1<0 and data_temp2 > 60 or data_temp2 < 0:
+                                            print("Los horarios tienen que ser ingresados en un formato de 24 hrs")
+                                            print("!!! Vuelva a intentarlo !!!!")
+                                    except:
+                                        print("Ingrese los datos de forma numerica con el formato especificado")
+                                    status=time_verifier(duration_time,data_cartelera_consulta,time_compare)
+                                    if status:
                                         print("True")
                                     else:
                                         print("False")
                                         break
                                 else:
-                                    print("La película no está en cartelera")
-                                    print("Intente agregarla en la opción 2")
+                                    pass
+
                                 break
                             elif opcion_pelicula == 0:
                                 print()
