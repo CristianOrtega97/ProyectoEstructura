@@ -355,6 +355,7 @@ def menu_administrador(data_admin):
                                     status=time_verifier(duration_time,data_cartelera_consulta,time_compare)
                                     if status:
                                         print("True")
+                                        print("True")
                                     else:
                                         print("False")
                                         break
