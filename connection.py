@@ -22,3 +22,9 @@ class Connection:
         cursor = conn.cursor()
         cursor.execute(query)
         conn.commit()
+
+    @staticmethod
+    def edit(conn,query):
+        cursor = conn.cursor()
+        cursor.execute(query)
+        conn.commit()

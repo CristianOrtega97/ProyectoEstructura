@@ -217,6 +217,9 @@ def insert_pelicula(new_pelicula):
     query_agregar_pelicula = str('INSERT INTO peliculas VALUES ('+"'"+new_pelicula[0]+"',"+str(new_pelicula[1])+",'"+new_pelicula[2]+"')")
     Connection.add(conn,query_agregar_pelicula)
 
+def check_modificar_hora():
+    pass
+
 def seleccion_menu(tipo_usuario):
     if(tipo_usuario == 1):
         pass
@@ -428,13 +431,80 @@ def menu_administrador(data_admin):
                                     print("La pelicula fue eliminada correctamente")   
                                 except:
                                     print("Ingrese los datos en el formato requerido")
-                                    break              
+                                    break
+                            else:
+                                print("Escoja una opción válida")
+                                print("Intente mas tarde")
+                                break             
                         except:
                             print("Ingrese los datos en el formato requerido")
                             break
                 #Opción 5
                 elif opcion_menu == 5:
-                    pass
+                    municipio_usuario = encontrado[5]
+                    n = len(data_peliculas)
+                    quickSort(data_peliculas, 0, n-1)
+                    opcion_pelicula=1
+                    while(opcion_pelicula!=0):
+                        try:
+                            print('Seleccione la pelicula a modificar: ')
+                            for i in range(len(data_peliculas)):
+                                print(i+1,'.-',data_peliculas[i][0])
+                            print('0.- Salir')
+                            opcion_pelicula=int(input('Respuesta: '))
+                            if opcion_pelicula > 0 and opcion_pelicula <= len(data_peliculas):
+                                busqueda_pelicula = str("select * from vistaCarteleraActual where peliculas_nombre = '"+str(data_peliculas[opcion_pelicula-1][0])+"'"+" AND cartelera_status = 1")
+                                query_busqueda_pelicula = ''.join(busqueda_pelicula)
+                                data_cartelera_consulta=Connection.read(conn,query_busqueda_pelicula)
+                                try:
+                                    if len(data_cartelera_consulta) != 0:
+                                        sample_info = data_cartelera_consulta.pop()
+                                        opcion_modificar = 1
+                                        while opcion_modificar != 0:
+                                            try:
+                                                print("Ingrese valor a modificar")
+                                                print("1.- Nombre")
+                                                print("2.- Minutos")
+                                                print("3.- Clasificación")
+                                                print("0.- Salir")
+                                                opcion_modificar = int(input("Respuesta: "))
+                                                if opcion_modificar <= 3 and opcion_modificar >= 0:
+                                                    if opcion_modificar == 1:
+                                                        old_name = sample_info[0]
+                                                        new_name = input("Ingrese el nuevo nombre: ")
+                                                        query_name = "UPDATE peliculas SET peliculas_nombre = '" + str(new_name) + "' WHERE peliculas_nombre = '" + str(old_name) + "'"
+                                                        Connection.edit(conn,query_name)
+                                                        print("La pelicula fue modificada exitosamente")
+                                                        break
+                                                    elif opcion_modificar == 2: 
+                                                        break
+                                                    elif opcion_modificar == 3: 
+                                                        old_name = sample_info[0]
+                                                        new_class = input("Ingrese la nueva clasificación: ")
+                                                        query_name = "UPDATE peliculas SET peliculas_clasificacion = '" + str(new_class) + "' WHERE peliculas_nombre = '" + str(old_name) + "'"
+                                                        Connection.edit(conn,query_name)
+                                                        print("La pelicula fue modificada exitosamente")
+                                                        break
+                                                    else:
+                                                        print("Saliendo del menú")
+                                                        break
+                                                else:
+                                                    print("La opción no existe, vuelvalo a intentar")
+                                            except:
+                                                pass
+                                    else:
+                                        print("La pelicula no se encuentra en la cartelera")
+                                        break
+                                except:
+                                    print("Ingrese los datos en el formato requerido")
+                                    break               
+                            else:
+                                print("Escoja una opción válida")
+                                print("Intente mas tarde")
+                                break 
+                        except:
+                            print("Ingrese los datos en el formato requerido")
+                            break    
                 #Opción 6
                 elif opcion_menu == 6:
                     n = len(data_peliculas)
@@ -547,7 +617,6 @@ def menu_administrador(data_admin):
                                 #Mostrar Cartelera
                                 try:
                                     while seleccion_pelicula < 0 or seleccion_pelicula > len(data_cartelera_consulta)+1:
-                                        print("LONGITUD: ",len(data_cartelera_consulta))
                                         print("Seleccione la opción de pelicula a modificar: ")
                                         consultarPelicula(data_cartelera_consulta)
                                         print("--------------------------------------------")
@@ -556,7 +625,6 @@ def menu_administrador(data_admin):
                                         if seleccion_pelicula < 0 or seleccion_pelicula > len(data_cartelera_consulta)+1:
                                             print("Ingrese un número entre las opciones mostradas")
                                         else:
-                                            print("LONGITUD",len(data_cartelera_consulta)+1)
                                             temp_option.append(data_cartelera_consulta.pop(seleccion_pelicula-1))
                                             break
                                 except ValueError:
