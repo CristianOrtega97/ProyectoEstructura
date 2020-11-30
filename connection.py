@@ -12,7 +12,13 @@ class Connection:
         return list(cursor.fetchall())
     
     @staticmethod
-    def add (conn,query):
+    def add(conn,query):
+        cursor = conn.cursor()
+        cursor.execute(query)
+        conn.commit()
+
+    @staticmethod
+    def delete(conn,query):
         cursor = conn.cursor()
         cursor.execute(query)
         conn.commit()
