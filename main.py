@@ -188,11 +188,11 @@ def get_new_schedule(duration_time,hour,min):
         duration_time[0] += 1
         new_time.append(duration_time[0]+int(hour))
         new_time.append(time_temp)
-        return new_time
+        return list(new_time)
     else:
         new_time.append(duration_time[0]+int(hour))
         new_time.append(duration_time[1]+int(min))
-        return new_time
+        return list(new_time)
 
 #Inserta nuevo registro a cartelera
 def insert_new_cartelera(new_schedule,movie_selected,id_pelicula,id_municipio):
@@ -201,8 +201,8 @@ def insert_new_cartelera(new_schedule,movie_selected,id_pelicula,id_municipio):
     duration_time = convert_time(movie_selected[0][5])
     final_time= get_new_schedule(duration_time,new_schedule[0],new_schedule[1])
     query_insert_cartelera = str("INSERT INTO cartelera VALUES("+ str(id_pelicula) +","+str(municipio[0][0])+",'"+str(new_schedule[2])+"','"+str(new_schedule[0])+"','"+str(new_schedule[1])+"','"+str(final_time[0])+"','"+str(final_time[1])+"',"+str(1)+","+str(new_schedule[3])+")")
-    print("QUERY IS: "+query_insert_cartelera)
-    #Connection.add(conn,query_insert_cartelera)
+    Connection.add(conn,query_insert_cartelera)
+    print("La pelicula fue agregada a cartelera exitosamente")
 
 #Modifica el registro de alguna pelicula en cartelera
 def insert_modify_cartelera(new_schedule,movie_selected,schedule_selected):
@@ -347,13 +347,13 @@ def menu_administrador(data_admin):
                                     status=time_verifier(duration_time,data_cartelera_consulta,time_compare)
                                     if status:
                                         pass
-                                        # data_cartelera_consulta=Connection.read(conn,query_busqueda_pelicula)
-                                        # insert_new_cartelera(time_compare,data_cartelera_consulta,opcion_pelicula-1,municipio_usuario)
+                                        data_cartelera_consulta=Connection.read(conn,query_busqueda_pelicula)
+                                        insert_new_cartelera(time_compare,data_cartelera_consulta,opcion_pelicula-1,municipio_usuario)
                                     else:
                                         break
                                 else:
                                     data_cartelera_consulta=Connection.read(conn,query_busqueda_pelicula)
-
+                                    break
                                 break
                             elif opcion_pelicula == 0:
                                 print()
@@ -426,8 +426,7 @@ def menu_administrador(data_admin):
                                     print("PELICULA CARTELERA: ",pelicula_cartelera)
                                     print("OPCION CARTELERA: ",opcion_cartelera)
                                     query_delete_cartelera = str("DELETE FROM cartelera  WHERE cartelera_pelicula = " + str(opcion_cartelera -1) + " AND cartelera_dia = '" + str(pelicula_cartelera[4])+"' AND cartelera_inicio = "+str(pelicula_cartelera[6]))
-                                    print(query_delete_cartelera)
-                                    #Connection.delete(conn,query_delete_cartelera)    
+                                    Connection.delete(conn,query_delete_cartelera)    
                                     print("La pelicula fue eliminada correctamente")   
                                 except:
                                     print("Ingrese los datos en el formato requerido")
@@ -477,14 +476,35 @@ def menu_administrador(data_admin):
                                                         print("La pelicula fue modificada exitosamente")
                                                         break
                                                     elif opcion_modificar == 2:
+                                                        new_schedule = []
+                                                        new_cartelera = []
                                                         try:
+                                                            i=0
+                                                            data_cartelera_consulta=Connection.read(conn,query_busqueda_pelicula)
+                                                            data_cartelera_temp = data_cartelera_consulta
                                                             print("INFO: ", data_cartelera_consulta)
                                                             duration_minutes = int(input("Ingrese la nueva duración de la pelicula: "))
                                                             new_duration = convert_time(duration_minutes)
-                                                            data_cartelera_consulta=Connection.read(conn,query_busqueda_pelicula)
-                                                            while len(data_cartelera_consulta) != 0:
-                                                                pass
-                                                        except:
+                                                            while len(data_cartelera_temp) != 0:
+                                                                print("LONGITUD: ",len(data_cartelera_temp))
+                                                                data_to_send = data_cartelera_temp.pop()
+                                                                new_schedule.append(get_new_schedule(new_duration,data_to_send[6],int(data_to_send[7])))
+                                                                list(new_schedule)
+                                                                data_to_send[9]=str(new_schedule[i][1])
+                                                                print("DATA MINUTO: ",str(data_to_send[9]))
+                                                                print("DATA_TO_SEND 2: ",data_to_send) 
+                                                                print("NEW SCHEDULE: ",new_schedule, "   TYPE: ",type(new_schedule))
+                                                                data_to_send[8]=new_schedule[i][0]
+                                                                print("DATA HORA: ",data_to_send[8])
+                                                                print("DATA_TO_SEND: ",data_to_send)
+                                                                new_cartelera.append(data_to_send)
+                                                                print("DATA_TO_SEND 3: ",data_to_send)
+                                                                data_to_send = []
+                                                                i+=1
+      
+                                                            print("NEW SCHEDULES: ", new_schedule)
+                                                            print("NEW CARTELERA: ", new_cartelera)
+                                                        except ValueError:
                                                             print("Ingrese los datos en el formato requerido")
                                                             break 
                                                         break
@@ -500,20 +520,20 @@ def menu_administrador(data_admin):
                                                         break
                                                 else:
                                                     print("La opción no existe, vuelvalo a intentar")
-                                            except:
+                                            except ValueError:
                                                 print("Ingrese los datos en el formato requerido")
                                                 break 
                                     else:
                                         print("La pelicula no se encuentra en la cartelera")
                                         break
-                                except:
+                                except ValueError:
                                     print("Ingrese los datos en el formato requerido")
                                     break               
                             else:
                                 print("Escoja una opción válida")
                                 print("Intente mas tarde")
                                 break 
-                        except:
+                        except ValueError:
                             print("Ingrese los datos en el formato requerido")
                             break    
                 #Opción 6
