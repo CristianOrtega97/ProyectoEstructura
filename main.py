@@ -655,10 +655,94 @@ def menu_cliente(data_customer):
                     pass
                 elif opcion_menu == 4:
                     pass
+
+                #Opción 5
                 elif opcion_menu == 5:
-                    pass
+                    n = len(data_peliculas)
+                    quickSort(data_peliculas, 0, n-1)
+                    opcion_pelicula=1
+                    while(opcion_pelicula!=0):
+                        try:
+                            print('Seleccione la pelicula a buscar: ')
+                            for i in range(len(data_peliculas)):
+                                print(i+1,'.-',data_peliculas[i][0])
+                            print('0.- Salir')
+                            opcion_pelicula=int(input('Respuesta: '))
+                            if opcion_pelicula > 0 and opcion_pelicula <= len(data_peliculas): 
+                                busqueda_pelicula = str("select * from vistaCarteleraActual where peliculas_nombre = '"+str(data_peliculas[opcion_pelicula-1][0])+"'"+" AND cartelera_status = 1")
+                                query_busqueda_pelicula = ''.join(busqueda_pelicula)
+                                data_cartelera_consulta=Connection.read(conn,query_busqueda_pelicula)
+                                print(busqueda_pelicula)
+                                print("DATA:" , data_cartelera_consulta)
+                                consultarPelicula(data_cartelera_consulta)
+                                break
+                            elif opcion_pelicula == 0:
+                                print()
+                                print('--------------------')
+                                print('Regresando al menú anterior')
+                                print('--------------------')
+                                print()
+                            else:
+                                print()
+                                print('------------------------------')
+                                print('La opción ingresada no existe')
+                                print('------------------------------')
+                                print()
+                        except ValueError:
+                            print()
+                            print('*******************************')
+                            print('Ingrese una opción numerica')
+                            print('*******************************')
+
+                #Opción 6
+                elif opcion_menu == 6:
+                    estado_usuario = encontrado[4]
+                    data_ciudades = str("select municipio_nombre from vistaMunicipios where estados_nombre ='"+estado_usuario+"'")
+                    query_data_ciudades = ''.join(data_ciudades)
+                    data_ciudades = Connection.read(conn,query_data_ciudades)
+                    n = len(data_ciudades)
+                    print("Sorted array is:",data_ciudades)
+                    quickSort(data_ciudades, 0, n-1)
+                    opcion_ciudad=1
+                    while(opcion_ciudad!=0):
+                        try:
+                            print('Seleccione la ciudad a buscar: ')
+                            for i in range(len(data_ciudades)):
+                                print(i+1,'.-',data_ciudades[i][0])
+                            print('0.- Salir')
+                            opcion_ciudad=int(input('Respuesta: '))
+                            if opcion_ciudad > 0 and opcion_ciudad <= len(data_ciudades): 
+                                busqueda_pelicula = str("select * from vistaCarteleraActual where municipio_nombre = '"+str(data_ciudades[opcion_ciudad-1][0])+"'")
+                                query_busqueda_pelicula = ''.join(busqueda_pelicula)
+                                data_cartelera_consulta=Connection.read(conn,query_busqueda_pelicula)
+                                print('------------------------------------------------')
+                                print('Sucursal: ',data_cartelera_consulta[0][2])
+                                print('Día: ',d2)
+                                consultarCartelera(data_cartelera_consulta)
+                                break
+                            elif opcion_ciudad == 0:
+                                print()
+                                print('--------------------')
+                                print('Regresando al menú anterior')
+                                print('--------------------')
+                                print()
+                            else:
+                                print()
+                                print('------------------------------')
+                                print('La opción ingresada no existe')
+                                print('------------------------------')
+                                print()
+                        except ValueError:
+                            print()
+                            print('*******************************')
+                            print('Ingrese una opción numerica')
+                            print('*******************************')
                 else:
-                    pass
+                    print()
+                    print('------------------------------')
+                    print('La opción ingresada no existe')
+                    print('------------------------------')
+                    print()
             elif opcion_menu == 7:
                 print()
                 print('--------------------')
