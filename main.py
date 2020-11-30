@@ -476,7 +476,17 @@ def menu_administrador(data_admin):
                                                         Connection.edit(conn,query_name)
                                                         print("La pelicula fue modificada exitosamente")
                                                         break
-                                                    elif opcion_modificar == 2: 
+                                                    elif opcion_modificar == 2:
+                                                        try:
+                                                            print("INFO: ", data_cartelera_consulta)
+                                                            duration_minutes = int(input("Ingrese la nueva duración de la pelicula: "))
+                                                            new_duration = convert_time(duration_minutes)
+                                                            data_cartelera_consulta=Connection.read(conn,query_busqueda_pelicula)
+                                                            while len(data_cartelera_consulta) != 0:
+                                                                pass
+                                                        except:
+                                                            print("Ingrese los datos en el formato requerido")
+                                                            break 
                                                         break
                                                     elif opcion_modificar == 3: 
                                                         old_name = sample_info[0]
@@ -491,7 +501,8 @@ def menu_administrador(data_admin):
                                                 else:
                                                     print("La opción no existe, vuelvalo a intentar")
                                             except:
-                                                pass
+                                                print("Ingrese los datos en el formato requerido")
+                                                break 
                                     else:
                                         print("La pelicula no se encuentra en la cartelera")
                                         break
