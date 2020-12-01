@@ -48,9 +48,6 @@ cartelera_status int not null,
 cartelera_sala int not null
 )
 
-select * from cartelera
-UPDATE cartelera SET cartelera_minutos_final = 55 WHERE cartelera_pelicula = 1 AND cartelera_municipio = 1 AND cartelera_final = 17
-
 -- CREATE TABLE USUARIOS - COMPLETED (23/10/20)
 create table usuarios(
 id_usuarios int not null primary key identity(1,1),
@@ -147,13 +144,39 @@ insert into peliculas values ('The Lion King',130,'AA','Infantil')
 insert into peliculas values ('Toy Story 4',120,'AA','Infantil')
 insert into peliculas values ('Cars 3',100,'AA','Animada')
 
-
 -- INSERT CARTELERA - COMPLETED
 insert into cartelera values(1,1,'2020-10-10',15,'00',17,'00',1,1)
 insert into cartelera values(1,1,'2020-10-10',20,'00',22,'00',1,1)
-insert into cartelera values(2,2,'2020-10-10',20,'00',22,'00',1,1)
-insert into cartelera values(2,11,'2020-10-10',20,'00',22,'00',1,1)
+insert into cartelera values(2,1,'2020-10-10',20,'00',22,'00',1,2)
+insert into cartelera values(2,1,'2020-10-10',20,'00',22,'00',1,2)
+insert into cartelera values(3,1,'2020-10-10',15,'00',17,'00',1,3)
+insert into cartelera values(3,1,'2020-10-10',20,'00',22,'00',1,3)
+insert into cartelera values(4,1,'2020-10-10',20,'00',22,'00',1,4)
+insert into cartelera values(4,1,'2020-10-10',20,'00',22,'00',1,4)
+insert into cartelera values(5,1,'2020-10-10',20,'00',22,'00',1,5)
+insert into cartelera values(5,1,'2020-10-10',20,'00',22,'00',1,5)
 
+insert into cartelera values(1,2,'2020-10-10',15,'00',17,'00',1,1)
+insert into cartelera values(1,2,'2020-10-10',20,'00',22,'00',1,1)
+insert into cartelera values(2,2,'2020-10-10',20,'00',22,'00',1,2)
+insert into cartelera values(2,2,'2020-10-10',20,'00',22,'00',1,2)
+insert into cartelera values(3,2,'2020-10-10',15,'00',17,'00',1,3)
+insert into cartelera values(3,2,'2020-10-10',20,'00',22,'00',1,3)
+insert into cartelera values(4,2,'2020-10-10',20,'00',22,'00',1,4)
+insert into cartelera values(4,2,'2020-10-10',20,'00',22,'00',1,4)
+insert into cartelera values(5,2,'2020-10-10',20,'00',22,'00',1,5)
+insert into cartelera values(5,2,'2020-10-10',20,'00',22,'00',1,5)
+
+insert into cartelera values(1,11,'2020-10-10',15,'00',17,'00',1,1)
+insert into cartelera values(1,11,'2020-10-10',20,'00',22,'00',1,1)
+insert into cartelera values(2,11,'2020-10-10',20,'00',22,'00',1,2)
+insert into cartelera values(2,11,'2020-10-10',20,'00',22,'00',1,2)
+insert into cartelera values(3,11,'2020-10-10',15,'00',17,'00',1,3)
+insert into cartelera values(3,11,'2020-10-10',20,'00',22,'00',1,3)
+insert into cartelera values(4,11,'2020-10-10',20,'00',22,'00',1,4)
+insert into cartelera values(4,11,'2020-10-10',20,'00',22,'00',1,4)
+insert into cartelera values(5,11,'2020-10-10',20,'00',22,'00',1,5)
+insert into cartelera values(5,11,'2020-10-10',20,'00',22,'00',1,5)
 
 -- INSERT USUARIOS - COMPLETED (23/10/20)
 insert into usuarios values ('Juan','Perez',1234,'1234',1,1,1)
@@ -215,3 +238,6 @@ drop database EstructuraAlgoritmos
 
 -- CREATE DATABASE -- CREATE ONLY IF NEEDED
 create database EstructuraAlgoritmos
+
+select * from cartelera
+select * from peliculas

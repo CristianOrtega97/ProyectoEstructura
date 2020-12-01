@@ -73,8 +73,6 @@ if conn:
     data_cartelera_disponible=Connection.read(conn,query_vista_cartelera_actual)
     data_usuarios_disponible=Connection.read(conn,query_vista_usuarios)
     data_peliculas=Connection.read(conn,'select peliculas_nombre from peliculas')
-    print(data_cartelera_disponible)
-    print(data_usuarios_disponible)
 
 else: 
     print("You're not connected")
@@ -265,7 +263,8 @@ def insert_new_cartelera(new_schedule,movie_selected,id_pelicula,id_municipio):
     municipio = Connection.read(conn,query_id_municipio)
     duration_time = convert_time(movie_selected[0][5])
     final_time= get_new_schedule(duration_time,new_schedule[0],new_schedule[1])
-    query_insert_cartelera = str("INSERT INTO cartelera VALUES("+ str(id_pelicula) +","+str(municipio[0][0])+",'"+str(new_schedule[2])+"','"+str(new_schedule[0])+"','"+str(new_schedule[1])+"','"+str(final_time[0])+"','"+str(final_time[1])+"',"+str(1)+","+str(new_schedule[3])+")")
+    query_insert_cartelera = "INSERT INTO cartelera VALUES("+ str(id_pelicula+1) +","+str(municipio[0][0])+",'"+str(new_schedule[2])+"','"+str(new_schedule[0])+"','"+str(new_schedule[1])+"','"+str(final_time[0])+"','"+str(final_time[1])+"',"+str(1)+","+str(new_schedule[3])+")"
+    print(query_insert_cartelera)
     Connection.add(conn,query_insert_cartelera)
     print("La pelicula fue agregada a cartelera exitosamente")
 
@@ -334,6 +333,7 @@ def consultarCartelera(data_cartelera):
             print('Clasificación:',data_pelicula[1])
             print('Duración: ',data_pelicula[5],'minutos')
             print('Horario: ',int(data_pelicula[6]),':',data_pelicula[7],' - ',int(data_pelicula[8]),':',data_pelicula[9]) 
+            print("Sala: ", str(data_cartelera[11]))
             consultarCartelera(data_cartelera)
 
 def consultarPelicula(data_cartelera):
@@ -796,7 +796,9 @@ def menu_administrador(data_admin):
                                     print("Intente de nuevo más tarde")
                                     break
                                 #data_cartelera_consulta =  
-                                movie_time = data_cartelera_consulta[5]    
+                                print("MOVIE_TIME ",data_cartelera_consulta)
+                                get_movie_time = data_cartelera_consulta[0][5]
+                                movie_time = get_movie_time    
                                 duration_time = convert_time(movie_time+30)
                                 try:
                                     while(data_temp1 >= 25 or data_temp1<0 or data_temp2 >= 60 or data_temp2 < 0):
@@ -860,6 +862,34 @@ def menu_administrador(data_admin):
             print('Ingrese una opción numerica')
             print('*******************************')
 
+#Recursividad
+def array_tipo_pelicula(array_peliculas,tipo_pelicula):
+    tipo =  tipo_pelicula
+    array = array_peliculas
+    if len(array) != 0:
+        pelicula = array.pop()
+        if tipo == pelicula[4]:
+            print("ENCONTRADO: ",encontrado)
+            query_pelicula = "SELECT * FROM  vistaCarteleraActual WHERE peliculas_type = '" + str(tipo) + "' AND municipio_nombre = '" + str(encontrado[5]) + "'"
+            pelicula_found = Connection.read(conn,query_pelicula)
+            if len(pelicula_found) != 0:
+                data_temp = pelicula_found.pop()
+                print("")
+                print("-------------------------------------------------------------")
+                print("Pelicula: ", data_temp[0])
+                print("Estado:   ", data_temp[3])
+                print("Municipio: ", data_temp[2])
+                print("Horario: ", str(data_temp[6])+":"+str(data_temp[7]) + " - " + str(data_temp[8])+":"+str(data_temp[9]))
+                print("Sala: ", str(data_temp[11]))
+                print("-------------------------------------------------------------")
+                print("")
+            else:
+                pass
+            return array_tipo_pelicula(array,tipo)
+        else:
+            return array_tipo_pelicula(array,tipo)
+    else:
+        pass
 
 def menu_cliente(data_customer):
     print("-------------------------------------------------------------------")
@@ -872,7 +902,6 @@ def menu_cliente(data_customer):
     #query_id_municipio = str("SELECT id_estados FROM estados WHERE estados_nombre = '"+str(id_municipio)+"'")
     #estado_id_temp = Connection.read(conn,query_id_municipio)
     #estado_id = estado_id_temp[0][0]
-    print("MUNICIPIO ID: ",id_municipio)
     query_info_peliculas = "SELECT * FROM vistaCarteleraActual WHERE estados_nombre = '" + str(id_municipio) + "' AND cartelera_status = 1"
     data_cartelera_disponible = Connection.read(conn,query_info_peliculas)
     while(opcion_menu!=7):
@@ -913,6 +942,7 @@ def menu_cliente(data_customer):
                                     print("Estado:   ", data_temp[3])
                                     print("Municipio: ", data_temp[2])
                                     print("Horario: ", str(data_temp[6])+":"+str(data_temp[7]) + " - " + str(data_temp[8])+":"+str(data_temp[9]))
+                                    print("Sala: ", str(data_temp[11]))
                                     print("-------------------------------------------------------------")
                                     print("")
                             data_to_verify = []
@@ -939,13 +969,17 @@ def menu_cliente(data_customer):
                             print("Estado:   ", data_temp[3])
                             print("Municipio: ", data_temp[2])
                             print("Horario: ", str(data_temp[6])+":"+str(data_temp[7]) + " - " + str(data_temp[8])+":"+str(data_temp[9]))
+                            print("Sala: ", str(data_temp[11]))
                             print("")
                     else:
                         print("No existe ninguna pelicula con esa clasificación")
                         print("")
                         
                 elif opcion_menu == 3:
-                    pass    
+                    tipo_pelicula = input("Ingrese el tipo de peliculas a buscar: ")
+                    query_peliculas = "SELECT * FROM peliculas"
+                    array_peliculas = Connection.read(conn,query_peliculas)
+                    array_tipo_pelicula(array_peliculas,tipo_pelicula)    
                 elif opcion_menu == 4:
                     new_data = []
                     while len(data_peliculas) != 0:
@@ -973,6 +1007,7 @@ def menu_cliente(data_customer):
                                     print("Estado:   ", temp_result[3])
                                     print("Municipio: ", temp_result[2])
                                     print("Horario: ", str(temp_result[6])+":"+str(temp_result[7]) + " - " + str(temp_result[8])+":"+str(temp_result[9]))
+                                    print("Sala: ", str(temp_result[11]))
                                     print("-------------------------------------------------------------")
                                     print("")
                         else:
