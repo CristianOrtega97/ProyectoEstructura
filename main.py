@@ -915,6 +915,8 @@ def menu_cliente(data_customer):
                         print("")
                         
                 elif opcion_menu == 3:
+                    pass    
+                elif opcion_menu == 4:
                     new_data = []
                     while len(data_peliculas) != 0:
                         data_temp = data_peliculas.pop()
@@ -944,9 +946,7 @@ def menu_cliente(data_customer):
                                     print("-------------------------------------------------------------")
                                     print("")
                         else:
-                            pass    
-                elif opcion_menu == 4:
-                    pass
+                            pass
                 #Opción 5
                 elif opcion_menu == 5:
                     n = len(data_peliculas)
