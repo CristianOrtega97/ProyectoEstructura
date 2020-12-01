@@ -178,7 +178,7 @@ select * from vistaCarteleraActual where peliculas_nombre = 'The pick of Destiny
 
 create view vistaCarteleraActual
 as 
-select p.peliculas_nombre,p.peliculas_clasificacion,m.municipio_nombre,e.estados_nombre,c.cartelera_dia,p.peliculas_minutos,c.cartelera_inicio,c.cartelera_minutos_inicio,c.cartelera_final,c.cartelera_minutos_final,c.cartelera_status,c.cartelera_sala,p.id_peliculas
+select p.peliculas_nombre,p.peliculas_clasificacion,m.municipio_nombre,e.estados_nombre,c.cartelera_dia,p.peliculas_minutos,c.cartelera_inicio,c.cartelera_minutos_inicio,c.cartelera_final,c.cartelera_minutos_final,c.cartelera_status,c.cartelera_sala,p.id_peliculas,p.peliculas_type
 from cartelera c
 inner join municipios m on c.cartelera_municipio = m.id_municipios
 inner join estados e on m.municipios_estados = e.id_estados
@@ -190,7 +190,7 @@ select * from vistaCarteleraActual
 
 create view vistaUsuarios
 as
-select u.usuarios_nombre,usuarios_apellido,u.usuarios_usuario,u.usuarios_password,e.estados_nombre,m.municipio_nombre,u.usuarios_tipo,u.usuarios_status,p.peliculas_type
+select u.usuarios_nombre,usuarios_apellido,u.usuarios_usuario,u.usuarios_password,e.estados_nombre,m.municipio_nombre,u.usuarios_tipo,u.usuarios_status
 from usuarios u
 inner join municipios m on u.usuarios_municipios = m.id_municipios
 inner join estados e on m.municipios_estados = e.id_estados
