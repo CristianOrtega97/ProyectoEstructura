@@ -269,6 +269,15 @@ def insert_new_cartelera(new_schedule,movie_selected,id_pelicula,id_municipio):
     Connection.add(conn,query_insert_cartelera)
     print("La pelicula fue agregada a cartelera exitosamente")
 
+def insert_one_cartelera(new_schedule,movie_selected,id_pelicula,id_municipio):
+    query_id_municipio = str("SELECT id_municipios FROM municipios WHERE municipio_nombre='"+str(id_municipio)+"'")
+    municipio = Connection.read(conn,query_id_municipio)
+    duration_time = convert_time(movie_selected)
+    final_time= get_new_schedule(duration_time,new_schedule[0],new_schedule[1])
+    query_insert_cartelera = str("INSERT INTO cartelera VALUES("+ str(id_pelicula) +","+str(municipio[0][0])+",'"+str(new_schedule[2])+"','"+str(new_schedule[0])+"','"+str(new_schedule[1])+"','"+str(final_time[0])+"','"+str(final_time[1])+"',"+str(1)+","+str(new_schedule[3])+")")
+    Connection.add(conn,query_insert_cartelera)
+    print("La pelicula fue agregada a cartelera exitosamente")
+
 #Modifica el registro de alguna pelicula en cartelera
 def insert_modify_cartelera(new_schedule,movie_selected,schedule_selected):
     pass
@@ -281,6 +290,8 @@ def time_verifier_modify():
 def insert_pelicula(new_pelicula):
     query_agregar_pelicula = str('INSERT INTO peliculas VALUES ('+"'"+new_pelicula[0]+"',"+str(new_pelicula[1])+",'"+new_pelicula[2]+"','"+new_pelicula[3])+"')"
     Connection.add(conn,query_agregar_pelicula)
+    print("La pelicula fue agregada a cartelera exitosamente")
+    print("La pelicula será reflejada al siguiente inicio")
 
 def check_modificar_hora():
     pass
@@ -418,9 +429,24 @@ def menu_administrador(data_admin):
                                     else:
                                         break
                                 else:
-                                    data_cartelera_consulta=Connection.read(conn,query_busqueda_pelicula)
-                                    break
-                                break
+                                    while(data_temp1 >= 25 or data_temp1<0 or data_temp2 >= 60 or data_temp2 < 0):
+                                        data_temp1=int(input("Inserte la hora de la pelicula HH: "))
+                                        data_temp2=int(input("Inserte la hora de la pelicula MM: "))
+                                        date_compare=str(input("Inserte la fecha de la pelicula YYYY-MM-DD: "))
+                                        sala_compare=int(input("Ingrese el numero de sala: "))
+                                        if data_temp1 > 25 or data_temp1>0 or data_temp2 < 60 or data_temp2 > 0:
+                                            time_compare.append(data_temp1)
+                                            time_compare.append(data_temp2)
+                                            time_compare.append(date_compare)
+                                            time_compare.append(sala_compare)
+                                    if data_temp1 > 25 or data_temp1<0 and data_temp2 > 60 or data_temp2 < 0:
+                                        print("Los horarios tienen que ser ingresados en un formato de 24 hrs")
+                                        print("!!! Vuelva a intentarlo !!!!")
+                                    query_time = "SELECT peliculas_minutos from peliculas WHERE id_peliculas = " + str(opcion_pelicula-1)
+                                    time_consult = Connection.read(conn,query_time)
+                                    time = time_consult[0][0]
+                                    print("TIME: ",time , "    TYPE: ",type(time))
+                                    insert_one_cartelera(time_compare,time,opcion_pelicula-1,municipio_usuario)
                             elif opcion_pelicula == 0:
                                 print()
                                 print('--------------------')
@@ -452,11 +478,13 @@ def menu_administrador(data_admin):
                             print('0.- Salir')
                             opcion_pelicula=int(input('Respuesta: '))
                             if opcion_pelicula > 0 and opcion_pelicula <= len(data_peliculas):
-                                query_delete_cartelera = str("DELETE FROM cartelera  WHERE cartelera_pelicula = " + opcion_pelicula -1)
-                                query_delete_pelicula = str("DELETE FROM peliculas WHERE id_peliculas = " + opcion_pelicula -1)
+                                query_delete_cartelera = "DELETE FROM cartelera  WHERE cartelera_pelicula = " + str(opcion_pelicula -1)
+                                query_delete_pelicula = "DELETE FROM peliculas WHERE id_peliculas = " + str(opcion_pelicula -1)
                                 Connection.delete(conn,query_delete_cartelera)
                                 Connection.delete(conn,query_delete_pelicula)
-                                print("La pelicula fue eliminada correctamente")                       
+                                print("La pelicula fue eliminada correctamente")
+                                print("Los cambios se reflejarán al siguiente log-in")
+                                break                     
                         except:
                             print("Ingrese los datos en el formato requerido")
                             break
@@ -491,7 +519,7 @@ def menu_administrador(data_admin):
                                     pelicula_cartelera = data_cartelera_consulta.pop(opcion_cartelera-1)
                                     print("PELICULA CARTELERA: ",pelicula_cartelera)
                                     print("OPCION CARTELERA: ",opcion_cartelera)
-                                    query_delete_cartelera = str("DELETE FROM cartelera  WHERE cartelera_pelicula = " + str(opcion_cartelera -1) + " AND cartelera_dia = '" + str(pelicula_cartelera[4])+"' AND cartelera_inicio = "+str(pelicula_cartelera[6]))
+                                    query_delete_cartelera = "DELETE FROM cartelera  WHERE cartelera_pelicula = " + str(opcion_cartelera -1) + " AND cartelera_dia = '" + str(pelicula_cartelera[4])+"' AND cartelera_inicio = "+str(pelicula_cartelera[6])
                                     Connection.delete(conn,query_delete_cartelera)    
                                     print("La pelicula fue eliminada correctamente")   
                                 except:
@@ -656,10 +684,12 @@ def menu_administrador(data_admin):
                                 busqueda_pelicula = str("select * from vistaCarteleraActual where peliculas_nombre = '"+str(data_peliculas[opcion_pelicula-1][0])+"'"+" AND cartelera_status = 1")
                                 query_busqueda_pelicula = ''.join(busqueda_pelicula)
                                 data_cartelera_consulta=Connection.read(conn,query_busqueda_pelicula)
-                                print(busqueda_pelicula)
-                                print("DATA:" , data_cartelera_consulta)
-                                consultarPelicula(data_cartelera_consulta)
-                                break
+                                if len(data_cartelera_consulta) != 0:
+                                    consultarPelicula(data_cartelera_consulta)
+                                    break
+                                else:
+                                    print("La pelicula no cuenta con ningún horario")
+                                    break
                             elif opcion_pelicula == 0:
                                 print()
                                 print('--------------------')
@@ -963,8 +993,12 @@ def menu_cliente(data_customer):
                                 busqueda_pelicula = str("select * from vistaCarteleraActual where peliculas_nombre = '"+str(data_peliculas[opcion_pelicula-1][0])+"'"+" AND cartelera_status = 1")
                                 query_busqueda_pelicula = ''.join(busqueda_pelicula)
                                 data_cartelera_consulta=Connection.read(conn,query_busqueda_pelicula)
-                                consultarPelicula(data_cartelera_consulta)
-                                break
+                                if len(data_cartelera_consulta) != 0:
+                                    consultarPelicula(data_cartelera_consulta)
+                                    break
+                                else:
+                                    print("La pelicula no cuenta con ningún horario")
+                                    break
                             elif opcion_pelicula == 0:
                                 print()
                                 print('--------------------')
@@ -982,7 +1016,6 @@ def menu_cliente(data_customer):
                             print('*******************************')
                             print('Ingrese una opción numerica')
                             print('*******************************')
-
                 #Opción 6
                 elif opcion_menu == 6:
                     estado_usuario = encontrado[4]
