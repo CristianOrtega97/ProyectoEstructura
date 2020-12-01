@@ -30,7 +30,8 @@ create table peliculas(
 id_peliculas int not null primary key identity(1,1),
 peliculas_nombre varchar(255) not null,
 peliculas_minutos int not null,
-peliculas_clasificacion varchar(3) not null
+peliculas_clasificacion varchar(3) not null,
+peliculas_type varchar(30) not null
 )
 
 -- CREATE TABLE CARTELERA - COMPLETED (16/10/20)
@@ -46,6 +47,9 @@ cartelera_minutos_final varchar(2) not null,
 cartelera_status int not null,
 cartelera_sala int not null
 )
+
+select * from cartelera
+UPDATE cartelera SET cartelera_minutos_final = 55 WHERE cartelera_pelicula = 1 AND cartelera_municipio = 1 AND cartelera_final = 17
 
 -- CREATE TABLE USUARIOS - COMPLETED (23/10/20)
 create table usuarios(
@@ -137,11 +141,11 @@ insert into municipios values ('E','5','Mocorito')
 
 
 -- INSERT PELICULAS - COMPLETED
-insert into peliculas values ('Mulan',120,'AA')
-insert into peliculas values ('The pick of Destiny',140,'B15')
-insert into peliculas values ('The Lion King',130,'AA')
-insert into peliculas values ('Toy Story 4',120,'AA')
-insert into peliculas values ('Cars 3',100,'AA')
+insert into peliculas values ('Mulan',120,'AA','Infantil')
+insert into peliculas values ('The pick of Destiny',140,'B15','Comedia')
+insert into peliculas values ('The Lion King',130,'AA','Infantil')
+insert into peliculas values ('Toy Story 4',120,'AA','Infantil')
+insert into peliculas values ('Cars 3',100,'AA','Animada')
 
 
 -- INSERT CARTELERA - COMPLETED
@@ -153,6 +157,7 @@ insert into cartelera values(2,11,'2020-10-10',20,'00',22,'00',1,1)
 
 -- INSERT USUARIOS - COMPLETED (23/10/20)
 insert into usuarios values ('Juan','Perez',1234,'1234',1,1,1)
+insert into usuarios values ('Juan','Cliente',1,'1',1,2,1)
 insert into usuarios values ('John','Johnson',56789,'56789',2,2,1)
 insert into usuarios values ('Shaneqa','Smith',234,'234',3,2,1)
 insert into usuarios values ('Dave','Grohl',111,'111',12,1,1)
@@ -173,19 +178,19 @@ select * from vistaCarteleraActual where peliculas_nombre = 'The pick of Destiny
 
 create view vistaCarteleraActual
 as 
-select p.peliculas_nombre,p.peliculas_clasificacion,m.municipio_nombre,e.estados_nombre,c.cartelera_dia,p.peliculas_minutos,c.cartelera_inicio,c.cartelera_minutos_inicio,c.cartelera_final,c.cartelera_minutos_final,c.cartelera_status,c.cartelera_sala
+select p.peliculas_nombre,p.peliculas_clasificacion,m.municipio_nombre,e.estados_nombre,c.cartelera_dia,p.peliculas_minutos,c.cartelera_inicio,c.cartelera_minutos_inicio,c.cartelera_final,c.cartelera_minutos_final,c.cartelera_status,c.cartelera_sala,p.id_peliculas
 from cartelera c
 inner join municipios m on c.cartelera_municipio = m.id_municipios
 inner join estados e on m.municipios_estados = e.id_estados
 inner join peliculas p on c.cartelera_pelicula = p.id_peliculas
 go
 
-
-select * from vistaCarteleraActual where municipio_nombre = 'Guadalajara'  AND cartelera_status = 1
+select * from peliculas
+select * from vistaCarteleraActual
 
 create view vistaUsuarios
 as
-select u.usuarios_nombre,usuarios_apellido,u.usuarios_usuario,u.usuarios_password,e.estados_nombre,m.municipio_nombre,u.usuarios_tipo,u.usuarios_status
+select u.usuarios_nombre,usuarios_apellido,u.usuarios_usuario,u.usuarios_password,e.estados_nombre,m.municipio_nombre,u.usuarios_tipo,u.usuarios_status,p.peliculas_type
 from usuarios u
 inner join municipios m on u.usuarios_municipios = m.id_municipios
 inner join estados e on m.municipios_estados = e.id_estados
