@@ -26,6 +26,27 @@ class Cola:
             self.items.pop()
         return len(self.items) == 0
 
+
+
+class Pila:
+     def __init__(self):
+         self.items = []
+
+     def estaVacia(self):
+         return self.items == []
+
+     def incluir(self, item):
+         self.items.append(item)
+
+     def extraer(self):
+         return self.items.pop()
+
+     def inspeccionar(self):
+         return self.items[len(self.items)-1]
+
+     def tamano(self):
+         return len(self.items)
+
 #SELECT QUERIES
 query_select_estados='select * from estados'
 query_select_municipios='select * from municipios'
@@ -57,6 +78,28 @@ if conn:
 
 else: 
     print("You're not connected")
+
+def binarySearch(arr, x): 
+    l = 0
+    r = len(arr) 
+    while (l <= r): 
+        m = l + ((r - l) // 2) 
+  
+        res = (x == arr[m]) 
+  
+        # Check if x is present at mid 
+        if (res == 0): 
+            return m - 1
+  
+        # If x greater, ignore left half 
+        if (res > 0): 
+            l = m + 1
+  
+        # If x is smaller, ignore right half 
+        else: 
+            r = m - 1
+  
+    return -1
 
 def log_in(entrada_usuario,entrada_password,data_usuarios_disponible):
     usuario_encontrado=''
@@ -499,6 +542,7 @@ def menu_administrador(data_admin):
                                                         print("La pelicula fue modificada exitosamente")
                                                         break
                                                     elif opcion_modificar == 2:
+                                                        status = True
                                                         new_schedule = []
                                                         new_cartelera = []
                                                         try:
@@ -522,7 +566,6 @@ def menu_administrador(data_admin):
                                                                 cartelera_temp = new_cartelera.pop()
                                                                 cola.agregar(cartelera_temp)
                                                                 item.agregar(cartelera_temp)
-                                                            status = True
                                                             tamano = cola.tamano()
                                                             if tamano >= 2:                                                                
                                                                 while tamano >= 2:
@@ -543,11 +586,8 @@ def menu_administrador(data_admin):
                                                                         status = False
                                                                         break
                                                                 if status == True:
-                                                                    print("NEW SCHEDULE: ", new_schedule)
                                                                     j = 0
                                                                     query_time = "UPDATE peliculas SET peliculas_minutos = " + str(duration_minutes) + " WHERE peliculas_nombre = '" + str(pelicula) + "'"
-                                                                    print(str(pelicula))
-                                                                    print(str(duration_minutes))
                                                                     Connection.edit(conn,query_time)
                                                                     municipio_query = "select id_municipios from municipios WHERE municipio_nombre = '" + str(encontrado[5]) + "'"
                                                                     municipio_select = Connection.read(conn,municipio_query)
@@ -555,9 +595,10 @@ def menu_administrador(data_admin):
                                                                     while len(new_schedule) != 0:
                                                                         temp_new_schedule = new_schedule.pop()
                                                                         query_time = "UPDATE cartelera SET cartelera_minutos_final = " + str(temp_new_schedule[1]) + " WHERE cartelera_pelicula = " + str(opcion_modificar-1) + "" + " AND cartelera_municipio = " + str(municipio) + " AND cartelera_final = " + str(temp_new_schedule[0])
-                                                                        Connection.add(conn,query_time)
+                                                                        Connection.edit(conn,query_time)
                                                                         j += 1
-                                                                        
+                                                                    print("La pelicula fue modificada exitosamente")
+                                                                    break                                                                
                                                                 else:
                                                                     print("La nueva duración hace que los horarios se cruzen")
                                                                     print("Intente de nuevo con una duración menor")
@@ -565,6 +606,7 @@ def menu_administrador(data_admin):
                                                             else:
                                                                 query_time = "UPDATE peliculas SET peliculas_minutos = " + str(duration_minutes) + " WHERE peliculas_nombre = '" + str(pelicula) + "'"
                                                                 Connection.edit(conn,query_time)
+                                                                break
                                                         except ValueError:
                                                             print("Ingrese los datos en el formato requerido")
                                                             break 
@@ -641,7 +683,6 @@ def menu_administrador(data_admin):
                     query_data_ciudades = ''.join(data_ciudades)
                     data_ciudades = Connection.read(conn,query_data_ciudades)
                     n = len(data_ciudades)
-                    print("Sorted array is:",data_ciudades)
                     quickSort(data_ciudades, 0, n-1)
                     opcion_ciudad=1
                     while(opcion_ciudad!=0):
@@ -790,32 +831,92 @@ def menu_administrador(data_admin):
 
 
 def menu_cliente(data_customer):
+    print("-------------------------------------------------------------------")
     print("Bienvenido Cliente: ",data_customer[0]," ",data_customer[1])
     print('Sucursal Preferida: ', data_customer[5])
     print('Estado: ',data_customer[4])
+    print(" ")
     opcion_menu=1
+    id_municipio = data_customer[4]
+    #query_id_municipio = str("SELECT id_estados FROM estados WHERE estados_nombre = '"+str(id_municipio)+"'")
+    #estado_id_temp = Connection.read(conn,query_id_municipio)
+    #estado_id = estado_id_temp[0][0]
+    print("MUNICIPIO ID: ",id_municipio)
+    query_info_peliculas = "SELECT * FROM vistaCarteleraActual WHERE estados_nombre = '" + str(id_municipio) + "' AND cartelera_status = 1"
+    data_cartelera_disponible = Connection.read(conn,query_info_peliculas)
     while(opcion_menu!=7):
         try:
             print()
             print('Seleccione alguna de las siguientes Opciones: ')
-            print('1.- Buscar película por nombre')
-            print('2.- Buscar película por clasificación')
-            print('3.- Buscar película por género')
+            print('1.- Buscar película por nombre')  #DONE
+            print('2.- Buscar película por clasificación') #DONE
+            print('3.- Buscar película por género') 
             print('4.- Ordenar cartelera (A y D)')
-            print('5.- Consultar película')
-            print('6.- Consultar cartelera')
+            print('5.- Consultar película')   #DONE
+            print('6.- Consultar cartelera')  #DONE
             print('7.- Salir')
             opcion_menu=int(input('Respuesta: '))
             if opcion_menu > 0 and opcion_menu <= 6:
+                #Binary Search
                 if opcion_menu == 1:
-                    pass
+                    binary = 0
+                    data_to_verify = []
+                    data_cartelera = []
+                    clasificacion_answer=input("Ingrese la pelicula a buscar: ")
+                    if len(data_cartelera_disponible) > 0:
+                        while len(data_cartelera_disponible) != 0:
+                            data = data_cartelera_disponible.pop()
+                            for i in range(10):
+                                data_to_verify.append(data[i])
+                                if i == 9:
+                                    count_found = data_to_verify.count(clasificacion_answer)
+                                    if count_found != 0:
+                                        data_cartelera.append(data_to_verify)
+                            binary = binarySearch(data_to_verify,clasificacion_answer)
+                            if binary == 4:
+                                while len(data_cartelera) != 0:
+                                    data_temp = data_cartelera.pop()
+                                    print("")
+                                    print("-------------------------------------------------------------")
+                                    print("Pelicula: ", data_temp[0])
+                                    print("Estado:   ", data_temp[3])
+                                    print("Municipio: ", data_temp[2])
+                                    print("Horario: ", str(data_temp[6])+":"+str(data_temp[7]) + " - " + str(data_temp[8])+":"+str(data_temp[9]))
+                                    print("-------------------------------------------------------------")
+                                    print("")
+                            data_to_verify = []
                 elif opcion_menu == 2:
-                    pass
+                    data_to_verify = []
+                    data_cartelera = []
+                    #Listas - Count
+                    clasificacion_answer=input("Ingrese la clasificación de la pelicula a buscar: ")
+                    if len(data_cartelera_disponible) > 0:
+                        while len(data_cartelera_disponible) != 0:
+                            data = data_cartelera_disponible.pop()
+                            for i in range(11):
+                                data_to_verify.append(data[i])
+                                if i == 10:
+                                    count_found = data_to_verify.count(clasificacion_answer)
+                                    if count_found != 0:
+                                        data_cartelera.append(data_to_verify)
+                            data_to_verify = []
+                        while len(data_cartelera) != 0:
+                            data_temp = data_cartelera.pop()
+                            print("")
+                            print("-------------------------------------------------------------")
+                            print("Pelicula: ", data_temp[0])
+                            print("Estado:   ", data_temp[3])
+                            print("Municipio: ", data_temp[2])
+                            print("Horario: ", str(data_temp[6])+":"+str(data_temp[7]) + " - " + str(data_temp[8])+":"+str(data_temp[9]))
+                            print("")
+                    else:
+                        print("No existe ninguna pelicula con esa clasificación")
+                        print("")
+                        
                 elif opcion_menu == 3:
                     pass
                 elif opcion_menu == 4:
                     pass
-
                 #Opción 5
                 elif opcion_menu == 5:
                     n = len(data_peliculas)
@@ -832,8 +933,6 @@ def menu_cliente(data_customer):
                                 busqueda_pelicula = str("select * from vistaCarteleraActual where peliculas_nombre = '"+str(data_peliculas[opcion_pelicula-1][0])+"'"+" AND cartelera_status = 1")
                                 query_busqueda_pelicula = ''.join(busqueda_pelicula)
                                 data_cartelera_consulta=Connection.read(conn,query_busqueda_pelicula)
-                                print(busqueda_pelicula)
-                                print("DATA:" , data_cartelera_consulta)
                                 consultarPelicula(data_cartelera_consulta)
                                 break
                             elif opcion_pelicula == 0:
@@ -861,7 +960,6 @@ def menu_cliente(data_customer):
                     query_data_ciudades = ''.join(data_ciudades)
                     data_ciudades = Connection.read(conn,query_data_ciudades)
                     n = len(data_ciudades)
-                    print("Sorted array is:",data_ciudades)
                     quickSort(data_ciudades, 0, n-1)
                     opcion_ciudad=1
                     while(opcion_ciudad!=0):
