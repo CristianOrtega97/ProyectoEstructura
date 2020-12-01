@@ -5,6 +5,27 @@ import pyodbc
 from connection import *
 from datetime import date, datetime
 
+class Cola:
+    def __init__(self):
+        self.items = []
+
+    def estaVacia(self):
+        return self.items == []
+
+    def agregar(self, item):
+        self.items.insert(0,item)
+
+    def avanzar(self):
+        return self.items.pop()
+
+    def tamano(self):
+        return len(self.items)
+
+    def vacio(self):
+        while len(self.items) != 0:
+            self.items.pop()
+        return len(self.items) == 0
+
 #SELECT QUERIES
 query_select_estados='select * from estados'
 query_select_municipios='select * from municipios'
@@ -67,6 +88,7 @@ def get_time(duration_time,movie_schedule):
         new_time.append(duration_time[0]+int(movie_schedule[6]))
         new_time.append(duration_time[1]+int(movie_schedule[7]))
         return new_time
+
 
 def get_duration(start,finish_hour,finish_minute):
     duration = 0
@@ -414,7 +436,7 @@ def menu_administrador(data_admin):
                                 data_cartelera_consulta=Connection.read(conn,query_busqueda_pelicula)
                                 try:
                                     if len(data_cartelera_consulta) != 0:
-                                        while(opcion_cartelera <= 1 or opcion_cartelera > len(data_cartelera_consulta)+1):
+                                        while(opcion_cartelera < 1 or opcion_cartelera > len(data_cartelera_consulta)):
                                             consultarPelicula(data_cartelera_consulta)
                                             print('----------------------------------------------')
                                             opcion_cartelera = int(input("Respuesta: "))
@@ -455,6 +477,7 @@ def menu_administrador(data_admin):
                                 busqueda_pelicula = str("select * from vistaCarteleraActual where peliculas_nombre = '"+str(data_peliculas[opcion_pelicula-1][0])+"'"+" AND cartelera_status = 1")
                                 query_busqueda_pelicula = ''.join(busqueda_pelicula)
                                 data_cartelera_consulta=Connection.read(conn,query_busqueda_pelicula)
+                                pelicula = data_cartelera_consulta[0][0]
                                 try:
                                     if len(data_cartelera_consulta) != 0:
                                         sample_info = data_cartelera_consulta.pop()
@@ -482,28 +505,66 @@ def menu_administrador(data_admin):
                                                             i=0
                                                             data_cartelera_consulta=Connection.read(conn,query_busqueda_pelicula)
                                                             data_cartelera_temp = data_cartelera_consulta
-                                                            print("INFO: ", data_cartelera_consulta)
                                                             duration_minutes = int(input("Ingrese la nueva duración de la pelicula: "))
                                                             new_duration = convert_time(duration_minutes)
                                                             while len(data_cartelera_temp) != 0:
-                                                                print("LONGITUD: ",len(data_cartelera_temp))
                                                                 data_to_send = data_cartelera_temp.pop()
                                                                 new_schedule.append(get_new_schedule(new_duration,data_to_send[6],int(data_to_send[7])))
                                                                 list(new_schedule)
                                                                 data_to_send[9]=str(new_schedule[i][1])
-                                                                print("DATA MINUTO: ",str(data_to_send[9]))
-                                                                print("DATA_TO_SEND 2: ",data_to_send) 
-                                                                print("NEW SCHEDULE: ",new_schedule, "   TYPE: ",type(new_schedule))
                                                                 data_to_send[8]=new_schedule[i][0]
-                                                                print("DATA HORA: ",data_to_send[8])
-                                                                print("DATA_TO_SEND: ",data_to_send)
                                                                 new_cartelera.append(data_to_send)
-                                                                print("DATA_TO_SEND 3: ",data_to_send)
                                                                 data_to_send = []
                                                                 i+=1
-      
-                                                            print("NEW SCHEDULES: ", new_schedule)
-                                                            print("NEW CARTELERA: ", new_cartelera)
+                                                            cola = Cola()
+                                                            item = Cola()
+                                                            while len(new_cartelera) != 0:
+                                                                cartelera_temp = new_cartelera.pop()
+                                                                cola.agregar(cartelera_temp)
+                                                                item.agregar(cartelera_temp)
+                                                            status = True
+                                                            tamano = cola.tamano()
+                                                            if tamano >= 2:                                                                
+                                                                while tamano >= 2:
+                                                                    item_temp = item.avanzar()
+                                                                    temp_time1=item_temp[8]
+                                                                    temp_time2=int(item_temp[9])
+                                                                    new_time_compare = []
+                                                                    new_time_compare.append(temp_time1)
+                                                                    new_time_compare.append(temp_time2)
+                                                                    item_temp = item.avanzar()
+                                                                    temp_time1=item_temp[6]
+                                                                    temp_time2=int(item_temp[7])
+                                                                    new_duration_time = get_duration(new_time_compare,temp_time1,temp_time2)
+                                                                    tamano = item.tamano()
+                                                                    if new_duration_time >= 30:
+                                                                        pass
+                                                                    else:
+                                                                        status = False
+                                                                        break
+                                                                if status == True:
+                                                                    print("NEW SCHEDULE: ", new_schedule)
+                                                                    j = 0
+                                                                    query_time = "UPDATE peliculas SET peliculas_minutos = " + str(duration_minutes) + " WHERE peliculas_nombre = '" + str(pelicula) + "'"
+                                                                    print(str(pelicula))
+                                                                    print(str(duration_minutes))
+                                                                    Connection.edit(conn,query_time)
+                                                                    municipio_query = "select id_municipios from municipios WHERE municipio_nombre = '" + str(encontrado[5]) + "'"
+                                                                    municipio_select = Connection.read(conn,municipio_query)
+                                                                    municipio = municipio_select[0][0]
+                                                                    while len(new_schedule) != 0:
+                                                                        temp_new_schedule = new_schedule.pop()
+                                                                        query_time = "UPDATE cartelera SET cartelera_minutos_final = " + str(temp_new_schedule[1]) + " WHERE cartelera_pelicula = " + str(opcion_modificar-1) + "" + " AND cartelera_municipio = " + str(municipio) + " AND cartelera_final = " + str(temp_new_schedule[0])
+                                                                        Connection.add(conn,query_time)
+                                                                        j += 1
+                                                                        
+                                                                else:
+                                                                    print("La nueva duración hace que los horarios se cruzen")
+                                                                    print("Intente de nuevo con una duración menor")
+                                                                    break
+                                                            else:
+                                                                query_time = "UPDATE peliculas SET peliculas_minutos = " + str(duration_minutes) + " WHERE peliculas_nombre = '" + str(pelicula) + "'"
+                                                                Connection.edit(conn,query_time)
                                                         except ValueError:
                                                             print("Ingrese los datos en el formato requerido")
                                                             break 

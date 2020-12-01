@@ -145,9 +145,11 @@ insert into peliculas values ('Cars 3',100,'AA')
 
 
 -- INSERT CARTELERA - COMPLETED
+insert into cartelera values(1,1,'2020-10-10',15,'00',17,'00',1,1)
 insert into cartelera values(1,1,'2020-10-10',20,'00',22,'00',1,1)
 insert into cartelera values(2,2,'2020-10-10',20,'00',22,'00',1,1)
 insert into cartelera values(2,11,'2020-10-10',20,'00',22,'00',1,1)
+
 
 -- INSERT USUARIOS - COMPLETED (23/10/20)
 insert into usuarios values ('Juan','Perez',1234,'1234',1,1,1)
