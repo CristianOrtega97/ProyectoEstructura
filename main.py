@@ -87,15 +87,15 @@ def binarySearch(arr, x):
   
         res = (x == arr[m]) 
   
-        # Check if x is present at mid 
+        # Revisa si X está presente a la mitad 
         if (res == 0): 
             return m - 1
   
-        # If x greater, ignore left half 
+        #Si X es mas grande, ignora la mitad izquierda 
         if (res > 0): 
             l = m + 1
   
-        # If x is smaller, ignore right half 
+        # Si X es mas pequeño, ignora la mitad derecha 
         else: 
             r = m - 1
   
@@ -279,7 +279,7 @@ def time_verifier_modify():
 
 #Esta Función solo agrega las películas pero no a la cartelera
 def insert_pelicula(new_pelicula):
-    query_agregar_pelicula = str('INSERT INTO peliculas VALUES ('+"'"+new_pelicula[0]+"',"+str(new_pelicula[1])+",'"+new_pelicula[2]+"')")
+    query_agregar_pelicula = str('INSERT INTO peliculas VALUES ('+"'"+new_pelicula[0]+"',"+str(new_pelicula[1])+",'"+new_pelicula[2]+"','"+new_pelicula[3])+"')"
     Connection.add(conn,query_agregar_pelicula)
 
 def check_modificar_hora():
@@ -366,6 +366,7 @@ def menu_administrador(data_admin):
                         new_pelicula.append(input('Ingrese el nombre de la película: '))
                         new_pelicula.append(int(input('Igrese la duración en minutos de la pelicula: ')))
                         new_pelicula.append(input('Ingrese la clasificación de la película: '))
+                        new_pelicula.append(input('Ingrese el tipo de la película: '))
                         insert_pelicula(new_pelicula)
                     except:
                         print("Uno o mas valores ingresados son erroneos, vuelva a intentarlo")
@@ -850,8 +851,8 @@ def menu_cliente(data_customer):
             print('Seleccione alguna de las siguientes Opciones: ')
             print('1.- Buscar película por nombre')  #DONE
             print('2.- Buscar película por clasificación') #DONE
-            print('3.- Buscar película por género') 
-            print('4.- Ordenar cartelera (A y D)')
+            print('3.- Buscar película por género') #Working
+            print('4.- Ordenar cartelera (A y D)') #Done
             print('5.- Consultar película')   #DONE
             print('6.- Consultar cartelera')  #DONE
             print('7.- Salir')
@@ -914,7 +915,36 @@ def menu_cliente(data_customer):
                         print("")
                         
                 elif opcion_menu == 3:
-                    pass
+                    new_data = []
+                    while len(data_peliculas) != 0:
+                        data_temp = data_peliculas.pop()
+                        data_insert = data_temp[0]
+                        new_data.append(data_insert)
+                    n = len(new_data)
+                    quickSort(new_data,1,n-1)
+                    search = Pila()
+                    while len(new_data) != 0:
+                        movie_search = new_data.pop(0)
+                        query_info_peliculas = "SELECT * FROM vistaCarteleraActual WHERE estados_nombre = '" + str(id_municipio) + "' AND cartelera_status = 1 AND peliculas_nombre = '" + str(movie_search) + "'"
+                        result_found = Connection.read(conn,query_info_peliculas)
+                        if len(result_found) != 0:
+                            while len(result_found) != 0:
+                                temp_result = result_found.pop(0)
+                                for i in range(12):
+                                    search.incluir(temp_result[i])
+                                vacio = search.estaVacia()
+                                if vacio == False:
+                                    search.extraer()
+                                    print("")
+                                    print("-------------------------------------------------------------")
+                                    print("Pelicula: ", temp_result[0])
+                                    print("Estado:   ", temp_result[3])
+                                    print("Municipio: ", temp_result[2])
+                                    print("Horario: ", str(temp_result[6])+":"+str(temp_result[7]) + " - " + str(temp_result[8])+":"+str(temp_result[9]))
+                                    print("-------------------------------------------------------------")
+                                    print("")
+                        else:
+                            pass    
                 elif opcion_menu == 4:
                     pass
                 #Opción 5
