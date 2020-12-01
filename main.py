@@ -333,7 +333,6 @@ def consultarCartelera(data_cartelera):
             print('Clasificación:',data_pelicula[1])
             print('Duración: ',data_pelicula[5],'minutos')
             print('Horario: ',int(data_pelicula[6]),':',data_pelicula[7],' - ',int(data_pelicula[8]),':',data_pelicula[9]) 
-            print("Sala: ", str(data_cartelera[11]))
             consultarCartelera(data_cartelera)
 
 def consultarPelicula(data_cartelera):
