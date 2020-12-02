@@ -69,13 +69,13 @@ conn = pyodbc.connect(
 )
 
 if conn:
-    print("We're connected")
+    print("Estás conectado correctamente a la BD")
     data_cartelera_disponible=Connection.read(conn,query_vista_cartelera_actual)
     data_usuarios_disponible=Connection.read(conn,query_vista_usuarios)
     data_peliculas=Connection.read(conn,'select peliculas_nombre from peliculas')
 
 else: 
-    print("You're not connected")
+    print("NO estás conectado correctamente a la BD")
 
 def binarySearch(arr, x): 
     l = 0
@@ -104,7 +104,6 @@ def log_in(entrada_usuario,entrada_password,data_usuarios_disponible):
     for i in range(len(data_usuarios_disponible)):
         if data_usuarios_disponible[i][2]==entrada_usuario:
             usuario_encontrado=data_usuarios_disponible[i]
-    print('Usuario encontrado: ',usuario_encontrado)
     if usuario_encontrado == '':
         print('Usuario es inexistente, intente de nuevo')
         return 0
@@ -264,7 +263,6 @@ def insert_new_cartelera(new_schedule,movie_selected,id_pelicula,id_municipio):
     duration_time = convert_time(movie_selected[0][5])
     final_time= get_new_schedule(duration_time,new_schedule[0],new_schedule[1])
     query_insert_cartelera = "INSERT INTO cartelera VALUES("+ str(id_pelicula+1) +","+str(municipio[0][0])+",'"+str(new_schedule[2])+"','"+str(new_schedule[0])+"','"+str(new_schedule[1])+"','"+str(final_time[0])+"','"+str(final_time[1])+"',"+str(1)+","+str(new_schedule[3])+")"
-    print(query_insert_cartelera)
     Connection.add(conn,query_insert_cartelera)
     print("La pelicula fue agregada a cartelera exitosamente")
 
@@ -444,7 +442,6 @@ def menu_administrador(data_admin):
                                     query_time = "SELECT peliculas_minutos from peliculas WHERE id_peliculas = " + str(opcion_pelicula-1)
                                     time_consult = Connection.read(conn,query_time)
                                     time = time_consult[0][0]
-                                    print("TIME: ",time , "    TYPE: ",type(time))
                                     insert_one_cartelera(time_compare,time,opcion_pelicula-1,municipio_usuario)
                             elif opcion_pelicula == 0:
                                 print()
@@ -516,8 +513,6 @@ def menu_administrador(data_admin):
                                         break
 
                                     pelicula_cartelera = data_cartelera_consulta.pop(opcion_cartelera-1)
-                                    print("PELICULA CARTELERA: ",pelicula_cartelera)
-                                    print("OPCION CARTELERA: ",opcion_cartelera)
                                     query_delete_cartelera = "DELETE FROM cartelera  WHERE cartelera_pelicula = " + str(opcion_cartelera -1) + " AND cartelera_dia = '" + str(pelicula_cartelera[4])+"' AND cartelera_inicio = "+str(pelicula_cartelera[6])
                                     Connection.delete(conn,query_delete_cartelera)    
                                     print("La pelicula fue eliminada correctamente")   
@@ -795,7 +790,6 @@ def menu_administrador(data_admin):
                                     print("Intente de nuevo más tarde")
                                     break
                                 #data_cartelera_consulta =  
-                                print("MOVIE_TIME ",data_cartelera_consulta)
                                 get_movie_time = data_cartelera_consulta[0][5]
                                 movie_time = get_movie_time    
                                 duration_time = convert_time(movie_time+30)
@@ -868,7 +862,6 @@ def array_tipo_pelicula(array_peliculas,tipo_pelicula):
     if len(array) != 0:
         pelicula = array.pop()
         if tipo == pelicula[4]:
-            print("ENCONTRADO: ",encontrado)
             query_pelicula = "SELECT * FROM  vistaCarteleraActual WHERE peliculas_type = '" + str(tipo) + "' AND municipio_nombre = '" + str(encontrado[5]) + "'"
             pelicula_found = Connection.read(conn,query_pelicula)
             if len(pelicula_found) != 0:
@@ -1120,7 +1113,7 @@ encontrado = 1
 today = date.today()
 d1 = today.strftime("%Y-%m-%d")
 d2 = today.strftime("%d-%m-%Y")
-print(d1)
+print("Día de hoy es: ",d1)
 while (encontrado != 0):
     try:
         entrada_usuario=int(input('Ingrese su usuario o "0" para salir: '))
@@ -1130,7 +1123,6 @@ while (encontrado != 0):
         else:
             entrada_password=input('Ingrese su contraseña: ')
             encontrado=log_in(entrada_usuario,entrada_password,data_usuarios_disponible)
-            print(encontrado)
             if encontrado != 0:
                 if encontrado[6] == 1:
                     menu_administrador(encontrado)
